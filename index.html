@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulado História e Geografia do Maranhão - PM MA 2026</title>
+<style>
+  :root{
+    --navy:#0b1930;
+    --navy2:#132644;
+    --gold:#f2b705;
+    --gold2:#ffd23f;
+    --red:#c8102e;
+    --green:#1e8e5a;
+    --wrong:#c62828;
+    --card:#ffffff;
+    --text:#152238;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Segoe UI",Arial,sans-serif;
+    background:linear-gradient(180deg,#081222,#0b1930 40%,#132644);
+    color:#eef2f8;
+    min-height:100vh;
+  }
+  header{
+    padding:22px 16px 16px;
+    text-align:center;
+    border-bottom:4px solid var(--gold);
+    background:radial-gradient(circle at 50% -50%, #1a3560, #081222 70%);
+  }
+  header h1{
+    margin:0 0 6px;
+    font-size:1.5rem;
+    color:var(--gold2);
+    letter-spacing:.5px;
+  }
+  header p{margin:0;color:#c9d6ea;font-size:.9rem;}
+
+  .tabs{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    margin:16px auto 0;
+    max-width:600px;
+    flex-wrap:wrap;
+  }
+  .tab-btn{
+    flex:1;
+    min-width:140px;
+    padding:10px 14px;
+    background:var(--navy2);
+    border:2px solid var(--gold);
+    color:#fff;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+    font-size:.95rem;
+    transition:.15s;
+  }
+  .tab-btn.active{
+    background:var(--gold);
+    color:var(--navy);
+  }
+  .tab-btn:hover{filter:brightness(1.1);}
+
+  .scoreboard{
+    position:sticky;
+    top:0;
+    z-index:20;
+    background:rgba(8,18,34,.96);
+    backdrop-filter:blur(4px);
+    border-bottom:2px solid var(--gold);
+    padding:10px 14px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px 18px;
+    justify-content:center;
+    align-items:center;
+    font-size:.85rem;
+  }
+  .scoreboard b{color:var(--gold2);}
+  .scoreboard .ok{color:#7CFC9A;font-weight:700;}
+  .scoreboard .bad{color:#ff8a8a;font-weight:700;}
+  .reset-btn{
+    background:var(--red);
+    color:#fff;
+    border:none;
+    padding:6px 12px;
+    border-radius:6px;
+    font-size:.8rem;
+    cursor:pointer;
+    font-weight:600;
+  }
+  .reset-btn:hover{filter:brightness(1.15);}
+
+  main{
+    max-width:820px;
+    margin:0 auto;
+    padding:18px 12px 60px;
+  }
+
+  .question{
+    background:var(--card);
+    color:var(--text);
+    border-radius:12px;
+    padding:16px 16px 14px;
+    margin-bottom:16px;
+    box-shadow:0 4px 14px rgba(0,0,0,.35);
+    border-left:6px solid var(--gold);
+  }
+  .q-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:8px;
+    margin-bottom:8px;
+    flex-wrap:wrap;
+  }
+  .q-num{
+    font-weight:800;
+    color:var(--navy2);
+    font-size:1rem;
+  }
+  .q-source{
+    font-size:.72rem;
+    color:#6b7688;
+    font-style:italic;
+    text-align:right;
+    flex:1;
+  }
+  .q-text{
+    white-space:pre-wrap;
+    line-height:1.5;
+    font-size:.95rem;
+    margin-bottom:12px;
+  }
+  .q-text .fonte{
+    display:block;
+    font-size:.82rem;
+    font-style:italic;
+    color:#4a5568;
+    margin:6px 0;
+  }
+
+  .alts{display:flex;flex-direction:column;gap:8px;}
+  .alt-btn{
+    text-align:left;
+    padding:9px 12px;
+    border:2px solid #d7dce4;
+    background:#f7f9fc;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:.92rem;
+    color:var(--text);
+    line-height:1.35;
+  }
+  .alt-btn:hover:not(.disabled){
+    border-color:var(--gold);
+    background:#fff7e0;
+  }
+  .alt-btn b{margin-right:6px;color:var(--navy2);}
+  .alt-btn.correct{
+    background:#e3f7ec;
+    border-color:var(--green);
+    color:#0d5c39;
+    font-weight:700;
+  }
+  .alt-btn.wrong{
+    background:#fdeceb;
+    border-color:var(--wrong);
+    color:#8f1e17;
+    font-weight:700;
+  }
+  .alt-btn.disabled{cursor:default;opacity:.85;}
+
+  .ce-row{display:flex;gap:10px;}
+  .ce-btn{
+    flex:1;
+    padding:11px;
+    border:2px solid #d7dce4;
+    background:#f7f9fc;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:700;
+    font-size:.95rem;
+    color:var(--text);
+  }
+  .ce-btn:hover:not(.disabled){border-color:var(--gold);background:#fff7e0;}
+  .ce-btn.correct{background:#e3f7ec;border-color:var(--green);color:#0d5c39;}
+  .ce-btn.wrong{background:#fdeceb;border-color:var(--wrong);color:#8f1e17;}
+  .ce-btn.disabled{cursor:default;opacity:.85;}
+
+  .feedback{
+    margin-top:10px;
+    font-size:.85rem;
+    font-weight:700;
+    padding:8px 10px;
+    border-radius:6px;
+  }
+  .feedback.ok{background:#e3f7ec;color:#0d5c39;}
+  .feedback.bad{background:#fdeceb;color:#8f1e17;}
+
+  footer{
+    text-align:center;
+    padding:20px;
+    color:#8fa0bd;
+    font-size:.78rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎯 Simulado PM MA 2026</h1>
+  <p>História do Maranhão (37 questões) + Geografia do Maranhão (74 questões)</p>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" data-tab="historia" onclick="mudarAba('historia')">📜 História (37)</button>
+  <button class="tab-btn" data-tab="geografia" onclick="mudarAba('geografia')">🗺️ Geografia (74)</button>
+</div>
+
+<div class="scoreboard">
+  <span>Respondidas: <b id="sc-resp">0</b>/<b id="sc-total">0</b></span>
+  <span>Acertos: <span class="ok" id="sc-ok">0</span></span>
+  <span>Erros: <span class="bad" id="sc-bad">0</span></span>
+  <button class="reset-btn" onclick="reiniciar()">Reiniciar aba</button>
+</div>
+
+<main id="main"></main>
+
+<footer>Bons estudos! Fé, foco e aprovação. 🚔</footer>
+
+<script>
+/* ============ DADOS ============ */
+
+const HISTORIA = [
+{n:1,f:"Questões POP Prof Rina/3452005 - AOCP - Prof (Pref São Luís)/2025",t:`O patrimônio cultural de São Luís (MA) inclui uma rica produção de poemas e romances de renomados escritores, entre eles, estão`,op:[["a","Aluísio de Azevedo e Graça Aranha."],["b","Érico Veríssimo e Ana Maria Machado."],["c","Carlos Drummond de Andrade e Mario Quintana."],["d","Clarice Lispector e Manuel Bandeira."],["e","José de Alencar e Rachel de Queiroz."]],g:"a"},
+{n:2,f:"Questões POP Prof Rina/1646862 - FCC - TRT11/2024",t:`No século XVII a Coroa portuguesa institui um modelo administrativo colonial, no Brasil,`,op:[["a",`que nomeava, para cada província, ouvidores encarregados da administração, auxiliados pelos chamados "juízes de fora" que eram representantes da Coroa responsáveis pelo cumprimento da lei.`],["b","segundo o qual a região Norte, até o limite imposto pelo Tratado de Tordesilhas, foi governada durante todo esse período pela Capitania Hereditária do Maranhão."],["c","estruturado em um Governo-Geral que foi subdividido em dois governos: a Repartição do Norte e a do Sul, divisão que perdurou pouco tempo."],["d","que vinculada a atual região Norte a uma região administrativa autônoma, inicialmente denominada Estado do Maranhão, tendo São Luís como sua capital."],["e","baseado na concepção de vice-reino adotada também pela Espanha em suas colônias, que perdurou até a vinda da família real portuguesa."]],g:"d"},
+{n:3,f:"Questões POP Prof Rina/3029053 - Instituto Consulplan - TJ MA/2024",t:`"Possuidor de uma das menores rendas fiscais do país, faltava ao Maranhão um produto para o qual o setor econômico voltasse os olhos, como o algodão que outrora dera considerável impulso na economia maranhense. [...] basta lembrar aqui que aquela, nossa capital, que fora das primeiras cidades, em todo o país, a servir-se de iluminação a gás e de transporte urbano a tração animal, seria das últimas, dentre as nossas metrópoles estaduais e cidades maiores, a poder substituir esses serviços de utilidade pública, quando caíram em desuso, pelos de iluminação e tração elétricas."
+(MEIRELES, Mário Martins. História do Maranhão. 2 ed. São Luís: Fundação Cultural do Maranhão, 1980.)
+
+A modernização no Maranhão a partir do contexto anteriormente citado tem como sua mola propulsora:`,op:[["a","A cultura do café, que chegou a disputar com pequena margem de diferença, com a produção do oeste paulista."],["b","A revitalização das plantações de drogas do sertão, durante todo o tempo, o sustentáculo da economia do estado."],["c","O plantio e o beneficiamento da seringueira, aproveitando o surto industrial de substituição das importações pelo qual passava o país."],["d","Instalação de fábricas, sobretudo têxteis ou de fiação que chamaram a atenção da população do interior do estado para a capital (São Luís)."]],g:"d"},
+{n:4,f:"Questões POP Prof Rina/2514224 - SUCONS UEMA - PSS UEMA 60+/2023",t:`Analise a imagem a seguir.
+[Foto: manifestação estudantil em São Luís com cartazes, 1979 - Agência Tambor]
+
+Em setembro de 1979, eclodiu na cidade de São Luís, capital do Estado do Maranhão, uma manifestação social que ficou conhecida como a Greve da Meia Passagem. Sobre essa revolta que abalou a cidade é correto afirmar que foi`,op:[["a","engendrada por um contexto de convulsão social e de retorno da legalidade do movimento estudantil, resultando na vitória dos estudantes."],["b","recebida com surpresa e condescendência pelo poder público, abrindo um canal de negociação para atender às reivindicações dos discentes."],["c","causada pela revolta e pela luta armada dos alunos por seus direitos, conseguindo obter sucesso no direito à meia passagem dos estudantes."],["d","motivada pela mobilização dos estudantes de São Luís e pelo apoio dos empresários da cidade em 1979, obtendo o êxito das propostas estudantis."],["e","ocasionada por um período de forte repressão nas universidades com a Lei da Anistia, desembocando em vários confrontos no êxito dos discentes."]],g:"a"},
+{n:5,f:"Questões POP Prof Rina/2639321 - IGEDUC - Prof (Tupanatinga)/2023",t:`É correto afirmar que, no início do século XVII, a França faria sua segunda tentativa de colonização no Maranhão, que a colonização portuguesa ainda não tinha atingido. Essa França Equinoxial é bem menos conhecida do que a tentativa anterior, embora tivesse um caráter mais oficial, na medida em que era apoiada diretamente pela Coroa e tenha constituído, naquele momento, o esforço colonial mais importante da França, que após sua derrota voltaria finalmente suas atenções para o norte do continente, para cuidar, depois de um século de quase total abandono, do estabelecimento de uma Nova França no Canadá.`,g:"certo"},
+{n:6,f:"Questões POP Prof Rina/2894010 - LJ Assessoria - Pref SA dos Lopes/2023",t:`Ainda sobre os conhecimentos históricos, geográficos e sociais do Município de Santo Antônio dos Lopes, é correto afirmar que suas terras são do tipo massapé, isso quer dizer que:`,op:[["a","Tem rio."],["b",`Não tem rio, mas os povoados "Marimbondo" e "Insono" são banhados pelo Rio Mearim.`],["c",`Não tem rio, mas os povoados "Pacas" e "Marianópolis" são banhados pelo Rio Poti. Os demais, são servidos de açudes, poços artesianos e igarapés temporários, sendo os mais importantes "marimbondo" e "Insono".`],["d",`Não tem rio, mas os povoados "Pacas" e "Marianópolis" são banhados pelo Rio Mearim. Os demais, são servidos de açudes, poços artesianos e igarapés temporários, sendo os mais importantes "marimbondo" e "Insono".`],["e",`Tem rio, mas os povoados "Pacas" e "Marianópolis" são banhados pelo Rio Mearim. Os demais, são servidos de açudes, poços artesianos e igarapés temporários, sendo os mais importantes "Longá" e "Parnaíba".`]],g:"d"},
+{n:7,f:"Questões POP Prof Rina/2506900 - SUCONS UEMA - EAD/2022",t:`O mito da Atenas Brasileira foi incorporado pela elite do século XIX, a partir da existência de uma classe dominante abastada, proprietária de estabelecimentos comerciais, escravos, terras e agroexportação de algodão, açúcar, além das fábricas. Foi essa opulência econômico-comercial, respaldada na exportação de produtos, sobretudo agrícolas, que norteou a convicção de "sociedade de letrados", que predominou, na província, ao longo do século XIX.
+(BOTELHO, Joan. Conhecendo e debatendo a História do Maranhão. 3.ed. São Luís: Gráfica e Editora Impacto, 2019.)
+
+A que se refere esse imaginário que produziu uma construção identitária da cidade de São Luís como a Atenas Brasileira?`,op:[["a","Ao conjunto de intelectuais ligado à cultura das letras, responsável por destacar a excepcionalidade da cultura regional."],["b","Aos literatos que saíram de São Luís, tornando conhecida a literatura local no quadro das letras nacionais."],["c","Ao grupo de notáveis escritores que estudou nos grandes centros europeus, formando uma elite cultural."],["d","A uma elite local de hábitos e de costumes europeus, representante de um grupo social distinto economicamente."],["e","Aos intelectuais oriundos de famílias menos abastadas, constituindo uma elite que ascendeu socialmente pelo talento das letras."]],g:"a"},
+{n:8,f:"Questões POP Prof Rina/2506908 - SUCONS UEMA - EAD/2022",t:`Leia o texto publicado pela Revista Continente.
+
+Caminhar pela Rua Portugal, [...], descer e subir as escadarias de pedras que ligam centenários becos e ladeiras, ou simplesmente parar para apreciar o gigante braço de mar que parece envolver a cidade são programas obrigatórios para quem chega a São Luís, uma das três capitais brasileiras construídas em ilhas e bem na porta de entrada para a Amazônia. Fundada por franceses, invadida por holandeses e colonizada por portugueses, a capital do Maranhão revela um preservado conjunto de influências que resiste ao tempo e que pode ser conferido nas centenas de prédios e monumentos encontrados no centro histórico. Reconhecida pela Unesco como Patrimônio da Humanidade, [...] ao lado do patrimônio material, presente nos casarões e prédios religiosos, São Luís também é marcante em suas manifestações populares. A miscigenação racial (brancos, negros e índios) está na origem da brincadeira mais presente na cidade, o bumba meu boi. Embora ocorra em outras regiões do Brasil, com semelhante conformação étnica, apenas no Maranhão a festa possui [...] "sotaques" diferentes. As distinções aparecem nos instrumentos, na indumentária e nas formas de expressão.
+
+O revestimento dos casarões da rua Portugal, no centro histórico de São Luís, de Alcântara e de Viana e uma outra manifestação cultural expressiva maranhense são`,op:[["a","a marchetaria e o cacuriá."],["b","as pedras de cantaria e o rodeio."],["c","o mosaico e a catira."],["d","os azulejos e o tambor de crioula."],["e","a argamassa e o bumba meu boi."]],g:"d"},
+{n:9,f:"Questões POP Prof Rina/2514384 - SUCONS UEMA - PSS UEMA 60+/2022",t:`A Balaiada foi a maior revolta rural do Maranhão, ocorrida entre dezembro de 1838 e fevereiro de 1841, caracterizando-se por ser uma luta protagonizada por homens e por mulheres do povo.
+
+Leia o trecho a seguir.
+Oficialmente, a Balaiada iniciou-se no lugar denominado Vila da Manga do Iguará (hoje município de Nina Rodrigues), próximo à Vargem Grande, quando o vaqueiro Raimundo Gomes invadiu o cárcere da vila, proclamando a soltura de todos os indivíduos que estavam presos. Esse foi, apenas, o estopim de um movimento que se expandiu por quase todo o interior da província, alcançando, inclusive, as terras do Piauí.
+(BOTELHO, Joan. Conhecendo e Debatendo a História do Maranhão. 3.ed. São Luís: gráfica e Editora Impacto, 2019, p. 165.)
+
+O episódio que representa o ápice desse movimento foi`,op:[["a","o cerco da capital São Luís, com a organização de um Conselho de guerra, formado por balaios e por políticos liberais."],["b","a tomada da cidade de Caxias no sertão maranhense, com a instalação de uma Junta Governativa."],["c","a ocupação da região de Pastos Bons, com a organização de um governo separatista no sul da Província."],["d","a chegada dos balaios ao poder no governo provincial, com a prisão do presidente da Província."],["e","a rendição das principais autoridades políticas da Província, com a emissão de decretos para a expulsão dos portugueses."]],g:"b"},
+{n:25,f:"Questões POP Prof Rina/1008558 - FCC - TJ MA/2019",t:`Considere as afirmações a seguir sobre a Companhia de Comércio do Maranhão e Grão-Pará, criada em 1755.
+
+I. Possuía o monopólio do comércio de escravos e o transporte naval de mercadorias para estas regiões.
+II. Enfrentou forte resistência da Companhia de Jesus, que explorava comercialmente a região amazônica.
+III. Criada pelos ingleses para controlar o comércio interno da Região Amazônica, a Companhia obteve amplo apoio dos comerciantes locais que puderam ter acesso a novas mercadorias.
+IV. Foi criada no contexto das reformas administrativas e políticas do Império Português sob o comando do Marquês de Pombal, a fim de desenvolver economicamente a região.
+
+Está correto o que se afirma APENAS em`,op:[["a","I e III."],["b","II e IV."],["c","I, III e IV."],["d","II e III."],["e","I, II e IV."]],g:"e"},
+{n:26,f:"Questões POP Prof Rina/1008559 - FCC - TJ MA/2019",t:`A Batalha do Jenipapo e o Cerco de Caxias são episódios que impactaram a história do Maranhão e se situam na conjuntura da`,op:[["a","Guerra de Independência ocorrida no Meio-Norte da América Portuguesa, território que não aderiu prontamente ao Império do Brasil, dada a forte presença militar e comercial portuguesa na região."],["b","Balaiada, caracterizada como uma revolta republicana que contou com a adesão de diversos setores sociais, contra o Império do Brasil, então dominado pela Casa de Bragança e pela Corte Portuguesa."],["c","Cabanagem, movimento de amplas dimensões que se originou no Grão-Pará e alcançou o Maranhão, marcado por grande participação popular, incluindo indígenas, quilombolas e escravos."],["d","Revolta de Bequimão, desencadeada pela reação de fazendeiros e donos de engenho contra o monopólio das companhias de comércio portuguesas."],["e","Guerra de combate à Invasão Holandesa, que resultou na vitória das forças nativistas luso-brasileiras após a expulsão das tropas de Maurício de Nassau."]],g:"a"},
+{n:27,f:"Questões POP Prof Rina/1008560 - FCC - TJ MA/2019",t:`Entre as consequências do governo de Miguel dos Santos Freire e Bruce (1823-1824), que se seguiu à adesão oficial do Maranhão ao Império do Brasil, destaca-se`,op:[["a","o desencadeamento da repressão às classes populares que queriam continuar fiéis a Portugal, ao contrário das elites comerciantes luso-brasileiras e donos de latifúndios, partidários da adesão ao Império do Brasil."],["b","a divisão da sociedade entre monarquistas e republicanos e a adesão formal do Maranhão à Confederação do Equador, que visava separar politicamente o Norte do Império do Brasil, constituindo uma República independente."],["c",`a abolição da escravidão na Província, causando a ruptura das elites escravocratas com o chamado "brucismo", que apoiava a emancipação dos escravos e a reforma agrária como forma de modernizar a região.`],["d","o estabelecimento de um pacto de união entre portugueses comerciantes e brasileiros latifundiários, articulado pelo governo da Província, para excluir as classes populares da cena política."],["e","o acirramento das tensões sociais e políticas na Província, em função do medo e da insatisfação das elites diante da postura antilusitana desse governo e sua condescendência com manifestações populares contra proprietários portugueses."]],g:"e"},
+{n:28,f:"Questões POP Prof Rina/1009547 - FCC - TJ MA/2019",t:`Após a adesão do Maranhão à República, proclamada em 1889, ocorreu`,op:[["a","a eclosão de uma sangrenta Guerra Civil, entre 1889 e 1891, que opôs federalistas e liberais que disputavam como seria o novo regime e como o Estado iria se relacionar com o poder central."],["b","a destituição do governo nomeado pelo Partido Republicano, que contava com grande apoio das elites locais, mas foi substituído por uma Junta Militar monarquista, comandada pelo coronel João Luis Tavares."],["c","uma revolta popular contra o novo governo republicano, dado o grande apoio que a monarquia e a Princesa Isabel tinham por parte de setores da imprensa abolicionista e da população negra, maioria absoluta no Estado."],["d",`um conflito entre o governo de Pedro Augusto Tavares Júnior e a Igreja Católica, pois o primeiro decretou a liberdade de culto e separou a Igreja e o Estado, demitindo padres de funções públicas, sendo pressionado pelo governo central da República a voltar atrás nestes decretos.`],["e","a intervenção no Estado por parte do governo central, em apoio à política republicana radical de reformas econômicas populares, combatidas pelas elites fundiárias tradicionais e pelo clero."]],g:"d"},
+{n:29,f:"Questões POP Prof Rina/1009549 - FCC - TJ MA/2019",t:`Dentre as manifestações da cultura maranhense, destacam-se algumas reconhecidas como patrimônio imaterial do Maranhão pelo IPHAN (Instituto do Patrimônio Histórico e Artístico Nacional):`,op:[["a","as Rodas de Capoeira e o Cavalo Marinho."],["b","o Tambor de Crioula e o Bumba meu Boi."],["c","a Renda de Bilros e o Tambor de Mina."],["d","a Marujada e o Maculelê."],["e","a Festa Junina e a Cavalhada."]],g:"b"},
+{n:30,f:"Questões POP Prof Rina/589439 - CEBRASPE - 1º Ten PM MA/2018",t:`No que diz respeito à história do Maranhão nos períodos colonial e imperial, julgue o item subsequente.
+
+A Balaiada, que sofreu violenta repressão comandada pelo coronel do Exército Luiz Alves de Lima, foi um movimento de composição social complexo, pois agregou artesãos, escravos, libertos e pequenos proprietários das províncias do Maranhão e Piauí contrários à opressão dos governos locais.`,g:"errado"},
+{n:31,f:"Questões POP Prof Rina/589442 - CEBRASPE - 1º Ten PM MA/2018",t:`Acerca da história do Maranhão no período republicano, julgue o item.
+
+Após a conturbada adesão do Maranhão à República, a ordem foi estabelecida a partir da ação das lideranças que já atuavam na política maranhense desde meados do século XIX.`,g:"errado"},
+{n:32,f:"Questões POP Prof Rina/589443 - CEBRASPE - 1º Ten PM MA/2018",t:`Acerca da história do Maranhão no período republicano, julgue o item.
+
+José Maria dos Reis Perdigão e Tarquínio Lopes Filho foram grandes lideranças dos tarquinistas — grupo maranhense que apoiou o tenentismo e a Revolução de 1930.`,g:"certo"},
+{n:33,f:"Questões POP Prof Rina/589962 - CEBRASPE - SM PM MA/2018",t:`O século XVI marcou o início da colonização do território brasileiro pelos portugueses, mas as terras descobertas ao sul do continente americano e conquistadas por Portugal e Espanha foram, à época, cobiçadas por outros povos europeus como os franceses, ingleses e holandeses, que chegaram a ocupar os domínios portugueses e espanhóis no Novo Mundo. Em meio a essa disputa, ampliada quando Portugal foi incorporado pela Espanha na denominada União Ibérica (1580–1640), situa-se parte significativa da história do Maranhão no período colonial.
+
+Considerando o contexto histórico apresentado, julgue o item relativo à história do Maranhão no período colonial.
+
+No século XVII, o Maranhão foi local de conflito entre os colonos, que não aceitavam escravizar indígenas, e os jesuítas, que impediam a escravidão africana na região.`,g:"errado"},
+{n:34,f:"Questões POP Prof Rina/589963 - CEBRASPE - SM PM MA/2018",t:`(Mesmo contexto da questão anterior sobre o período colonial maranhense.)
+
+A revolta liderada pelo senhor de engenho Manuel Beckman foi vitoriosa: coroado rei, Beckman governou o Maranhão por muitos anos até ser condenado e enforcado pelo Tribunal do Santo Ofício, fato que resultou na reintegração da região ao Estado do Brasil.`,g:"errado"},
+{n:35,f:"Questões POP Prof Rina/589966 - CEBRASPE - SM PM MA/2018",t:`(Mesmo contexto sobre o período colonial maranhense.)
+
+A construção do Forte de São Luís, localizado em uma ilha da baía de São Marcos, resultou da ação do francês Daniel de La Touche, senhor de La Ravardière.`,g:"certo"},
+{n:36,f:"Questões POP Prof Rina/589967 - CEBRASPE - SM PM MA/2018",t:`(Mesmo contexto sobre o período colonial maranhense.)
+
+A resistência francesa em defesa da França Equinocial, sob o comando de La Ravardière, impediu a conquista portuguesa do território do Maranhão, fato concretizado às vésperas da Independência do Brasil.`,g:"errado"},
+{n:37,f:"Questões POP Prof Rina/589970 - CEBRASPE - SM PM MA/2018",t:`Nas primeiras décadas após a Independência, o Brasil viveu verdadeira guerra civil. O Maranhão integrou esse quadro conflituoso, em que avulta a Balaiada (1838–1841), e que também envolveu o Piauí e parte do Ceará. Acerca desse assunto, julgue o item.
+
+Ao negar-se a enfrentar os balaios, Luís Alves de Lima e Silva, o futuro Duque de Caxias, recusou-se, pela primeira e única vez, a cumprir uma ordem do governo central.`,g:"errado"},
+{n:38,f:"Questões POP Prof Rina/589971 - CEBRASPE - SM PM MA/2018",t:`(Mesmo contexto sobre a Balaiada.)
+
+À época da Balaiada, a economia maranhense estava assentada na agroindústria açucareira, pois as culturas de algodão e arroz haviam fracassado por completo.`,g:"errado"},
+{n:39,f:"Questões POP Prof Rina/589972 - CEBRASPE - SM PM MA/2018",t:`(Mesmo contexto sobre a Balaiada.)
+
+A classe camponesa maranhense, no contexto das Regências, formou-se a partir de três matrizes: indígenas aldeados, escravos alforriados ou quilombolas e emigrantes do sertão cearense.`,g:"certo"},
+{n:40,f:"Questões POP Prof Rina/448804 - CEBRASPE - Prof (Pref São Luís)/2017",t:`A batalha de Guaxentuba inscreve-se entre os embates ocorridos no litoral do Maranhão colonial (século XVII), com reflexos na própria colonização do Brasil por Portugal. Essa batalha assinalou`,op:[["a","a vitória definitiva dos portugueses sobre os franceses pela posse da costa norte do Brasil."],["b","a histórica decisão de Jerônimo de Albuquerque de render-se a La Ravardière para preservar a vida de seus combatentes."],["c","o fim das incursões de países europeus sobre o território americano colonizado por Portugal."],["d","o extermínio dos povos indígenas que, vindos de Pernambuco, ocuparam o litoral maranhense."],["e","a inferioridade bélica francesa, agravada pela inexistência de qualquer aliança com índios da região."]],g:"a"},
+{n:41,f:"Questões POP Prof Rina/448811 - CEBRASPE - Prof (Pref São Luís)/2017",t:`A respeito da Companhia Geral de Comércio do Grão-Pará e Maranhão, assinale a opção correta.`,op:[["a","A companhia, que detinha o monopólio do comércio de diversas mercadorias com o objetivo de evitar o contrabando e sonegação de impostos, submetia-se ao poder do Estado do Grão-Pará e Maranhão."],["b","A criação da companhia ocorreu no contexto de autonomia do Estado do Grão-Pará e Maranhão, em relação ao Brasil, que permitia que o estado tivesse, inclusive, governador próprio."],["c","As atividades da companhia não incluíram o comércio de escravos, já que era mais comum, na região, o uso da mão-de-obra indígena."],["d","Com o desmembramento do Estado do Grão-Pará e Maranhão a companhia também foi extinta, o que resultou em uma súbita redução nas exportações do Maranhão e do Pará."],["e","A companhia, apesar de deter o monopólio das exportações, atuou em consonância com os interesses dos produtores locais."]],g:"b"},
+{n:42,f:"Questões POP Prof Rina/2480098 - FSADU UFMA - IF MA/2015",t:`"As províncias do norte são a Costa d'África do Sul. A avidez do ganho cega os homens, e, ante o lucro, abafam-se todos os sentimentos generosos e o homem que teve a infelicidade de ser escravo é vendido por outro homem, mais feliz do que ele, para fora de sua terra, do lugar onde foi criado, arrancando-o à família, aos parentes, a todas as afeições como se fosse uma besta de carga!". Esse relato, extraído do jornal Diário do Maranhão, de 12 de maio de 1874, refere-se ao tráfico interprovincial de escravos que foi utilizado como uma alternativa para atender à demanda de mão de obra para a região cafeeira após a proibição do tráfico transatlântico de escravos, em 1850. Sobre essa questão, pode-se afirmar:`,op:[["a","Os escravos deslocados pelo tráfico interprovincial eram utilizados exclusivamente nas atividades domésticas e no ganho, uma vez que a mão de obra escrava foi substituída nas atividades agrícolas pelos imigrantes estrangeiros."],["b","Os lamentos nos portos tornaram-se comuns, assim como as denúncias de maus-tratos nos tumbeiros que faziam os deslocamentos dos escravos das regiões econômicas em crise para o Sudeste."],["c","O tráfico interprovincial de escravos tornou-se uma importante atividade econômica no Maranhão uma vez que a cidade de São Luís passou a funcionar como um entreposto desse comércio ficando responsável pelo deslocamento dos escravos das províncias do Ceará e do Pará para o Rio de Janeiro."],["d","Essa atividade só cessou quando as províncias do Nordeste a impediram com altos impostos, ao sentirem que, a escravidão como instituição, estava ameaçada já que tal comércio havia produzido um desequilíbrio na distribuição dos contingentes escravos no país."],["e","O tráfico interprovincial de escravos foi intenso no Maranhão a partir do ano de 1846 e teve um papel relevante no processo de rompimento dos laços familiares e afetivos dos sujeitos escravizados, além de contribuir para a desarticulação do sistema escravista na província."]],g:"e"},
+{n:43,f:"Questões POP Prof Rina/2480131 - FSADU UFMA - IF MA/2015",t:`"Na hora que eu botava carga lá na Praia Grande, trazia depois de canoa para cá. Aí quando chegava aqui tirava da canoa e botava em carroças. Iche! Era difícil, era ombro mesmo, trazer uma peça de lá para cá. As casa aqui era de taipa porque era difícil da gente trazer tijolo, telha, essas coisas (material de construção). Depois que a ponte passou não, aí foi outra coisa. Mas antes ninguém esperava que ia ter uma explosão, a gente pensava que isso era da gente (Joaquim)". (BARROS, Valdenira. Imagens do Moderno em São Luís. São Luís, 2001, p. 56). Esse relato refere-se à construção da ponte São Francisco (oficialmente batizada como ponte José Sarney), em São Luís, inaugurada em 14 de fevereiro de 1970. Sobre essa questão, pode-se afirmar:`,op:[["a","A obra levou a várias manifestações, principalmente dos barqueiros e pescadores que ganhavam a vida fazendo o transporte de pessoas e mercadorias e das populações que foram deslocadas para sua construção. Tais atos contribuíram de forma significativa para o atraso das obras, visto que sua conclusão estava prevista para marcar as comemorações do primeiro ano de mandato do governador José Sarney."],["b","A construção da ponte levou ao deslocamento das classes alta e média para a região das praias e do bairro do São Francisco, liberando os antigos casarões que foram transformados, de imediato, em repartições públicas, o que possibilitou a preservação desse patrimônio arquitetônico."],["c",`O projeto de edificação da ponte era uma entre muitas ações planejadas pelo governador José Sarney com o intuito de transformar São Luís em uma capital condizente com "O Maranhão Novo". Essas ideias estavam contidas no "Plano Rodoviário da Ilha de São Luís" formulado em seu governo.`],["d","A retirada das famílias que, originariamente, ocupavam a região do São Francisco criou um espaço específico, habitado apenas pela classe média, com prédios modernos, restaurantes e hotéis que fizeram com que a ponte interligasse duas cidades distintas: a velha São Luís, com uma arquitetura antiga e ocupação social homogênea, e a nova São Luís, moderna e rica."],["e","A construção da ponte levou ao deslocamento de parte das populações que habitavam essa região dando lugar a moradias de classe média e a prédios comerciais. Mais do que a interligação de espaços, a ponte significou a passagem para um novo tempo, para uma São Luís do futuro, concepção que se articulava com a ideia de Maranhão Novo, slogan do então governador José Sarney."]],g:"e"},
+{n:44,f:"Questões POP Prof Rina/200147 - FGV - CBM MA/2012",t:`"O Maranhão passou a ser o primeiro estado brasileiro em número de conflitos agrários. Essa é a constatação da Comissão Pastoral da Terra (CPT), que (...) divulgou oficialmente no estado o seu 27º relatório anual sobre o tema. De acordo com a CPT, no ano passado, no Maranhão, foram registrados 251 casos de conflitos por terra, envolvendo 64.394 pessoas." (g1.globo.com)
+
+Com relação às raízes históricas da violência no campo no Estado do Maranhão, analise as afirmativas a seguir.
+
+I. No início da década de 1970, com o intuito de estimular a ocupação da região, o governo do Maranhão criou a Companhia Maranhense de Colonização (COMARCO), concedendo incentivos fiscais a grandes grupos empresariais, para a aquisição de vastas extensões territoriais a preços simbólicos, o que intensificou os conflitos de terra e a violência no campo.
+II. Para viabilizar a implantação do Centro de Lançamento de Alcântara (CLA), o governo maranhense assinou, a favor da União, o decreto de desapropriação de terras ocupadas por comunidades quilombolas, gerando conflitos fundiários que continuam, ainda hoje, em disputa judicial.
+III. Com o avanço do agronegócio na primeira década do século XXI, criou-se uma nova fronteira agrícola na região de MAPITOBA (parte do Maranhão, Piauí, Tocantins e Bahia), o que valorizou a terra e aumentou os conflitos com os posseiros tradicionais.
+
+Assinale:`,op:[["a","se somente a afirmativa I estiver correta."],["b","se somente a afirmativa II estiver correta."],["c","se somente a afirmativa III estiver correta."],["d","se somente as afirmativas I e II estiverem corretas."],["e","se todas as afirmativas estiverem corretas."]],g:"e"},
+{n:45,f:"Questões POP Prof Rina/2055726 - CESGRANRIO - SEEC RN/2011",t:`Durante os mais de trezentos anos de colonização, a América Portuguesa passou por diversas alterações em sua estrutura político-administrativa.
+
+Qual das associações abaixo apresenta a relação entre o evento e a sua causa direta?`,op:[["a","Criação do Vice-Reino do Brasil – Tratado de Santo Ildefonso"],["b","Fim das Capitanias Hereditárias – domínio espanhol durante a União Ibérica"],["c","Criação do Estado do Maranhão – ameaças estrangeiras à região amazônica"],["d","Mudança da capital para o Rio de Janeiro – ocupação holandesa do Nordeste"],["e","Subordinação do Vice-Rei ao Conselho Ultramarino – Insurreição Pernambucana"]],g:"c"},
+{n:46,f:"Questões POP Prof Rina/3053217 - MOVENS - Pref São Luís/2007",t:`Minha Terra natal, em Guaxenduba;
+Na trincheira, em que o luso ainda trabalha,
+A artilharia, que ao francês derruba,
+Por três bocas letais pragueja e ralha.
+O leão de França, arregaçando a juba,
+Saltou. E o luso, como um tigre, o atalha.
+Troveja a boca do arcabuz, e a tuba
+Do índio corta o clamor e o medo espalha.
+Foi então que se viu, sagrando a guerra,
+Nossa Senhora, com o Menino ao colo,
+Surgir lutando pela minha terra.
+Foi-lhe vista na mão a espada em brilho...
+(Pátria, se a Virgem quis assim teu solo,
+Que por ti não fará quem for teu filho?)
+(Humberto de Campos)
+
+Assinale a opção que apresenta o fato histórico maranhense relacionado com o soneto de Humberto de Campos.`,op:[["a","A Batalha de São Luís, que impediu a invasão francesa no Maranhão em 1612."],["b","A Batalha de Guaxenduba, que impediu a invasão francesa no Maranhão em 1612."],["c","A Batalha de Guaxenduba, de onde se originou a lenda da aparição de Nossa Senhora."],["d","A Batalha de São Luís, quando os portugueses expulsaram os franceses do território do Maranhão."],["e","A Batalha de Guaxenduba, quando ocorreu a vitória de Duque de Caxias sobre os invasores franceses."]],g:"c"},
+{n:47,f:"Questões POP Prof Rina/1108633 - FCC - SM PM MA/2006",t:`No início do século XVII, os franceses tentaram organizar uma colônia no Brasil. Para isso, fundaram a chamada de França Equinocial, no Maranhão. Identifique os fatos históricos associados a essa colonização.
+
+I. Contrariando as determinações do rei francês, Daniel de La Touche autorizou a difusão da religião dos protestantes entre os indígenas no Maranhão.
+II. Com o objetivo de fixar a colonização no Brasil, os franceses construíram o forte que denominaram de São Luís, em homenagem ao rei francês.
+III. Um dos ordenamentos instituídos na França Equinocial era a conversão da população ao cristianismo, segundo determinação do rei da França.
+IV. Os franceses fundaram a França Equinocial para garantir a posse das terras do Maranhão, conforme determinava as normas do Tratado de Tordesilhas.
+
+É correto o que se apresenta APENAS em`,op:[["a","I e II."],["b","I e III."],["c","II e III."],["d","II e IV."],["e","III e IV."]],g:"c"},
+{n:48,f:"Questões POP Prof Rina/1108634 - FCC - SM PM MA/2006",t:`Em 1684, eclodiu uma revolta de proprietários de terra no Maranhão, conhecida por Revolta de Bequimão. Os revoltosos posicionaram-se`,op:[["a","contra o monopólio da companhia de comércio e contra os jesuítas."],["b","contra a escravidão dos africanos e dos indígenas maranhenses."],["c","a favor da catequização dos indígenas realizada pelos jesuítas."],["d","a favor do monopólio real sobre a exploração dos produtos da região."],["e","contra a expulsão dos jesuítas determinada pela coroa portuguesa"]],g:"a"},
+{n:49,f:"Questões POP Prof Rina/1108635 - FCC - SM PM MA/2006",t:`A Batalha do Jenipapo foi um movimento`,op:[["a","contra as forças nacionalistas que lutavam pela independência política do Brasil."],["b","decisivo para a consolidar a independência e a configuração geográfica do Brasil."],["c","organizado pelos portugueses para resistir ao processo de independência do Brasil."],["d","idealizado pela burguesia, que defendia o pacto colonial entre Portugal e Brasil."],["e","promovido pelos estados do Nordeste que pretendiam se separar do Brasil."]],g:"b"},
+{n:50,f:"Questões POP Prof Rina/1108637 - FCC - SM PM MA/2006",t:`Os chamados "republicanos de 16 de novembro" acabaram roubando a cena política dos republicanos históricos na maior parte dos estados brasileiros. O "festival" adesionista foi tamanho que deixou incomodado um conjunto de republicanos idealistas. O editorial de 18 de novembro de 1891 do jornal "Pacotilha", ao fazer a avaliação dos dois primeiros anos de República afirma que tão logo fora nomeada a Junta Governativa, em 18 de novembro de 1889, tornou-se difícil encontrar monarquistas no Maranhão.
+(Luis Alberto Ferreira. In: www.outrostempos.uema.br)
+
+A análise do texto permite afirmar que`,op:[["a","não havia políticos monarquistas na província do Maranhão antes do novo regime."],["b",`os "republicanos de 16 de novembro" proclamaram a República no Maranhão.`],["c","os maranhenses republicanos demitiram os monarquistas dos cargos políticos."],["d","os republicanos maranhenses condenaram os monarquistas ao exílio político."],["e","os monarquistas maranhenses não tiveram receio em aderir ao novo regime."]],g:"e"},
+{n:51,f:"Questões POP Prof Rina/1719664 - Marinha - QT/2006",t:`A França Equinocial foi uma colônia francesa fundada no`,op:[["a","Rio de Janeiro."],["b","Pará."],["c","Maranhão."],["d","Amazonas."],["e","Piauí."]],g:"c"},
+{n:52,f:"Questões POP Prof Rina/2053607 - ESAG - Pref São Luís/2006",t:`"A fundação de São Luís, hoje capital do Estado do Maranhão, está ligada a uma invasão estrangeira, que visava não só o contrabando do pau-brasil, mas principalmente a ocupação efetiva da região". Essa invasão foi realizada nos inícios do século XVII, pelos:`,op:[["a","franceses, comandados por Daniel de La Touche."],["b","holandeses, comandados por Maurício de Nassau."],["c","ingleses, comandados pelo português João de Barros."],["d","espanhóis, comandados por Felipe II, rei da Espanha."]],g:"a"}
+];
+
+const GEOGRAFIA = [
+{n:1,f:"Questões Pop Prof RIna/2802685 - LJ Assessoria - Pref Turilândia/2024",t:`No futuro o Maranhão passará a produzir petróleo e gás natural. Uma das áreas é um bloco em Barreirinhas, na costa do Estado, em uma estrutura de:`,op:[["a","Bacias sedimentares"],["b","Dobramentos modernos"],["c","Crátons"],["d","Maciços antigos"],["e","Escudos cristalinos"]],g:"a"},
+{n:2,f:"Questões Pop Prof RIna/2802690 - LJ Assessoria - Pref Turilândia/2024",t:`É uma cidade estrategicamente localizada ao sul do Maranhão, entre as regiões norte, nordeste e centro-oeste, com grande extensão de terras propícias para o cultivo agrícola da soja. É um dos polos agrícolas de grande destaque do Maranhão. A cidade retratada no texto é:`,op:[["a","Balsas"],["b","Açailândia"],["c","Santa Inês"],["d","Imperatriz"],["e","Tocantinópolis"]],g:"a"},
+{n:3,f:"Questões Pop Prof RIna/2514228 - SUCONS UEMA - PSS UEMA 60+/2023",t:`Leia o texto.
+
+Os Biomas Brasileiros
+Bioma é um conjunto de vida vegetal e animal, constituído pelo agrupamento de tipos de vegetação contíguos e que podem ser identificados em nível regional, com condições de geologia e de clima semelhantes e que, historicamente, sofreram os mesmos processos de formação da paisagem, resultando em uma diversidade de flora e de fauna própria. Em nosso país existem seis tipos de biomas (Amazônia, Mata Atlântica, Cerrado, Caatinga, Pampa e Pantanal), sendo um deles considerado o maior bioma brasileiro e o possuidor da maior floresta tropical do mundo, a Amazônia. (IBGE)
+
+O Maranhão, estado que integra a macrorregião Nordeste, está situado em uma área de transição entre três biomas. São eles:`,op:[["a","Caatinga, Cerrado e Mata Atlântica."],["b","Pampas, Amazônia e Cerrado."],["c","Amazônia, Caatinga e Cerrado."],["d","Caatinga, Cerrado e Manguezal."],["e","Mata Atlântica, Pantanal e Cerrado."]],g:"c"},
+{n:4,f:"Questões Pop Prof RIna/2514234 - SUCONS UEMA - PSS UEMA 60+/2023",t:`Entenda o fenômeno que causa crateras e ameaça "engolir" cidades no Maranhão.
+
+As primeiras [...] se formaram a partir da rápida expansão urbana de Buriticupu, como consequência do desmatamento da vegetação nativa em áreas de alta declividade, é o que explica ao g1, o professor Fernando Bezerra, do programa de pós-graduação em Geografia, Natureza e Dinâmica do Espaço, da Universidade Estadual do Maranhão (UEMA).
+
+"A malha urbana da cidade, e seus sistemas de arruamentos, aliadas aos fortes eventos pluviométricos, contribui também com o grande volume de água (enxurradas) que chegam no interior dessas [...], aumentando o risco de avanço nas residências locais", explicou o professor.
+
+[Foto aérea: cratera de erosão em Buriticupu - MA]
+
+O fenômeno que teve grande destaque nas imprensas estadual e nacional, nos meses de março e de abril de 2023, no município de Buriticupu - MA, dá origem a formas de relevo conhecidas, cientificamente, por`,op:[["a","Chapadas."],["b","Serras."],["c","Planícies."],["d","Falésias."],["e","Voçorocas."]],g:"e"},
+{n:5,f:"Questões Pop Prof RIna/2514386 - SUCONS UEMA - PSS UEMA 60+/2022",t:`As águas de março causam muitos problemas para a capital maranhense, conforme publicado em diferentes mídias.
+
+Ruas, avenidas e espaços públicos, alagados, com carros arrastados pela correnteza. Este foi o cenário em vários pontos de São Luís, na tarde desta terça-feira, após uma chuva forte que teve, aproximadamente, duas horas de duração.
+
+[Foto: ponto de alagamento em São Luís-MA]
+
+A existência de pontos de alagamentos em São Luís está relacionada, principalmente,`,op:[["a","à expansão de saneamento básico e às chuvas esporádicas em São Luís."],["b","aos deslizamentos de colinas e às chuvas torrenciais."],["c","às ocorrências de rios no espaço urbanos e às chuvas de verão."],["d","à canalização dos rios urbanos e às chuvas sazonais em São Luís."],["e","ao sistema de drenagem urbana ineficiente e à ocorrência de chuvas intensas."]],g:"e"},
+{n:21,f:"Questões Pop Prof RIna/1008561 - FCC - TJ MA/2019",t:`A bacia hidrográfica do rio Mearim, com aproximadamente 99.000 km², está totalmente inserida no território do Estado do Maranhão. Sobre ela é correto afirmar que`,op:[["a","seu rio principal tem suas nascentes nas encostas setentrionais da Serra da Menina, em altitudes de 400 a 500 m aproximadamente, e seu curso total é de cerca de 930 km."],["b","o rio Mearim nasce nas elevações que formam o divisor entre as bacias hidrográficas dos rios Pindaré e Tocantins e deságua na baía de São Marcos depois de percorrer cerca de 870 km."],["c","abrange 73 municípios, dos quais 30 têm todo o seu território no interior da bacia e os demais municípios têm a sua sede situada no interior de outras bacias."],["d","apresenta as maiores concentrações demográficas na porção sul, onde ocorrem densidades que variam entre 20 e 35 hab/km², situação diferente do que ocorre na porção norte."],["e","ocupa, no sul e sudeste, extensa área de planaltos e serras cristalinas e nas porções central e setentrional ocupa áreas de depressões e planícies cujas altitudes variam entre 100 e 200 metros."]],g:"a"},
+{n:22,f:"Questões Pop Prof RIna/1008563 - FCC - TJ MA/2019",t:`Considere o gráfico e as afirmações a seguir.
+
+[Gráfico: Maranhão - Evolução da população urbana (%) - 1960: ~18% urbana/82% rural; 1991: ~40% urbana/60% rural; 2000: ~60% urbana/40% rural; 2010: ~63% urbana/37% rural. Fonte: IBGE Censos]
+
+I. No período entre 1960 e 2010, o número de municípios no estado cresceu mais de 100%, totalizando 217; no entanto, apenas 10 municípios concentram 1/3 da população maranhense.
+II. A criação da região metropolitana de São Luís, no início da década de 1990, deu forte impulso à urbanização do estado e, em 2017, a Grande São Luís tornou-se a terceira região metropolitana do Nordeste.
+III. Nas últimas décadas, o êxodo rural e o avanço da tecnologia no campo tiveram forte impacto sobre a redução da população rural e, consequentemente, sobre o total de trabalhadores rurais no estado.
+
+Está correto o que se afirma APENAS em`,op:[["a","I e II."],["b","I."],["c","I e III."],["d","II."],["e","II e III."]],g:"c"},
+{n:23,f:"Questões Pop Prof RIna/1008564 - FCC - TJ MA/2019",t:`Considere o mapa e os textos a seguir.
+
+[Mapa: Maranhão - Mesorregiões numeradas de 1 a 5: região 3 ao norte, região 2 a nordeste/leste, região 1 no centro, região 4 a oeste, região 5 ao sul]
+
+I. Com 52 municípios, produziu 21,1% do PIB do estado em 2015, concentrando 17,4% do mercado de trabalho formal estadual. Revela maior predominância nas atividades econômicas da indústria, com peso da construção civil e da indústria de transformação, agregada à produção de papel e celulose. Cabe notar o destaque da formação de riqueza gerada no município que participa com 7,6% do PIB Estadual, sediando o parque fabril da empresa Suzano Papel e Celulose.
+
+II. A Mesorregião participou com 8,7% do PIB estadual em 2015. Embora composta por 19 municípios e com pouco mais de 5,3% do emprego formal do estado, a Mesorregião apresenta o maior PIB per capita maranhense, influenciado pelo complexo soja-milho e algodão, e o menor contingente populacional, com 4,7% da população do estado.
+
+Os textos I e II descrevem, respectivamente, as mesorregiões`,op:[["a","4 e 3."],["b","2 e 1."],["c","1 e 5."],["d","4 e 5."],["e","2 e 4."]],g:"d"},
+{n:24,f:"Questões Pop Prof RIna/1009584 - FCC - TJ MA/2019",t:`A respeito da natureza maranhense é correto afirmar que`,op:[["a","o clima predominante é o equatorial, com elevadas temperaturas durante todo o ano e secas pronunciadas nos primeiros meses do ano; a leste encontra-se o clima tropical sem estação seca."],["b","a presença de clima com chuvas irregulares durante o ano provoca o aparecimento de inúmeros rios intermitentes, principalmente a oeste do estado."],["c","o relevo maranhense apresenta topografia regular, com aproximadamente 90% da superfície acima de 500 metros de altitude; o ponto mais elevado está no sul do estado, na serra dos Penitentes."],["d","o estado é formado por dois grandes biomas: a Amazônia e o Cerrado e outros dois de transição, a Amazônia/Cerrado e a Caatinga/Cerrado, além dos mangues, totalizando biomas de grande biodiversidade."],["e","a estrutura geológica do estado é predominantemente antiga datando as eras Arqueozoica e Proterozoica e, portanto, já muito alterada; apenas no sul do estado são encontrados terrenos mais novos."]],g:"d"},
+{n:25,f:"Questões Pop Prof RIna/1009586 - FCC - TJ MA/2019",t:`Considere os dados da tabela a seguir.
+
+Estado do Maranhão: Área e produção de "X"
+              2000    2009    2015    2017
+Área (mil ha)  188     409     761     817
+Produção (mil t) 491   1.210   2.099   2.331
+(IBGE, números arredondados)
+
+Os dados apresentados referem-se`,op:[["a","à mandioca."],["b","ao algodão."],["c","ao milho."],["d","ao arroz."],["e","à soja."]],g:"e"},
+{n:26,f:"Questões Pop Prof RIna/1009587 - FCC - TJ MA/2019",t:`Considere o gráfico apresentado a seguir.
+
+Estado do Maranhão − Composição do PIB − 2015
+[Gráfico de barra única dividida em três partes: I ocupa de 0 a ~70%, II de ~70% a ~90%, III de ~90% a 100%]
+
+Na composição do PIB (Produto Interno Bruto) maranhense, I e II correspondem, respectivamente, aos setores`,op:[["a","agropecuária e indústria."],["b","agropecuária e serviços."],["c","serviços e indústria."],["d","indústria e serviços."],["e","serviços e agropecuária"]],g:"c"},
+{n:27,f:"Questões Pop Prof RIna/589450 - CEBRASPE - 1º Ten PM MA/2018",t:`[Figura I: climograma de São Luís (MA) - precipitação alta de janeiro a maio (pico ~450mm em março/abril), baixa de junho a dezembro; temperatura média estável entre 26-27°C o ano todo. Figura II: climograma de Colinas (MA) - precipitação com pico em março (~280mm), baixa de junho a setembro, leve alta em novembro-dezembro; temperatura com maior amplitude, mais alta de setembro a dezembro]
+(F. Mendonça; Dani Oliveira. Climatologia: noções básicas e climas do Brasil. São Paulo: Oficina de Textos, 2007)
+
+Tendo como referência as figuras precedentes e considerando que o estado do Maranhão situa-se em uma região controlada por massas de ar quente, julgue o item.
+
+A regularidade térmica observada na cidade de São Luís ao longo do ano, conforme indicado na figura I, deve-se ao efeito da continentalidade.`,g:"errado"},
+{n:28,f:"Questões Pop Prof RIna/589451 - CEBRASPE - 1º Ten PM MA/2018",t:`(Mesmo contexto das figuras climáticas de São Luís e Colinas da questão anterior.)
+
+A maior pluviosidade nos meses de março e abril na porção norte do estado do Maranhão é efeito da zona de convergência intertropical (ZCIT).`,g:"certo"},
+{n:29,f:"Questões Pop Prof RIna/589452 - CEBRASPE - 1º Ten PM MA/2018",t:`(Mesmo contexto das figuras climáticas de São Luís e Colinas.)
+
+Em relação à variação sazonal, na cidade de Colinas, as temperaturas do ar mais elevadas ocorrem entre os meses de setembro e dezembro, em virtude das massas de ar seco.`,g:"certo"},
+{n:30,f:"Questões Pop Prof RIna/589453 - CEBRASPE - 1º Ten PM MA/2018",t:`Duas linhas dirigiram o povoamento no Maranhão: a que invadiu o litoral e a que avançou pelos altos sertões, oriunda do interior nordestino.
+(R. G. Rocha. O processo de ocupação do sul do Maranhão. In: Interespaço, v.1, n.1, 2015)
+
+Com relação ao povoamento do Maranhão, julgue o item que se segue.
+
+O povoamento da região litorânea e do alto sertão maranhense instituiu, nessas regiões, bases econômicas semelhantes.`,g:"errado"},
+{n:31,f:"Questões Pop Prof RIna/589454 - CEBRASPE - 1º Ten PM MA/2018",t:`(Mesmo contexto sobre o povoamento do Maranhão.)
+
+A ocupação do alto sertão maranhense foi realizada com o emprego da violência.`,g:"certo"},
+{n:32,f:"Questões Pop Prof RIna/589455 - CEBRASPE - 1º Ten PM MA/2018",t:`Com relação à geomorfologia do território maranhense, julgue o item a seguir.
+
+As atividades dos agentes modeladores do relevo revela um forte controle litológico no território maranhense.`,g:"errado"},
+{n:33,f:"Questões Pop Prof RIna/589456 - CEBRASPE - 1º Ten PM MA/2018",t:`Com relação à geomorfologia do território maranhense, julgue o item a seguir.
+
+O relevo do território maranhense apresenta feições típicas das bacias sedimentares com formas tabulares e subtabulares.`,g:"certo"},
+{n:34,f:"Questões Pop Prof RIna/589986 - CEBRASPE - SM PM MA/2018",t:`Acerca da geodiversidade do estado do Maranhão, o qual é composto, em sua maior parte, por relevo plano a suave ondulado, com clima tropical e equatorial e onde se formam solos profundos excessivamente ácidos, com baixa fertilidade natural e baixa capacidade para reter nutrientes, julgue o item.
+
+O relevo do estado é caracterizado por baixas superfícies de aplainamento em meio a extensas planícies fluviomarinhas, baixos platôs e chapadas.`,g:"certo"},
+{n:35,f:"Questões Pop Prof RIna/589987 - CEBRASPE - SM PM MA/2018",t:`(Mesmo contexto sobre a geodiversidade do Maranhão.)
+
+O Maranhão apresenta um conjunto de chapadas dissecadas por diversos processos erosivos e extensas planícies de deposição sedimentar que influenciam a geodiversidade do território desse estado.`,g:"certo"},
+{n:36,f:"Questões Pop Prof RIna/589989 - CEBRASPE - SM PM MA/2018",t:`(Mesmo contexto sobre a geodiversidade do Maranhão.)
+
+A vasta extensão de chapadas maranhenses se estende pelas bacias hidrográficas dos rios Parnaíba, Amazonas e Jaguaribe.`,g:"errado"},
+{n:37,f:"Questões Pop Prof RIna/589990 - CEBRASPE - SM PM MA/2018",t:`(Mesmo contexto sobre a geodiversidade do Maranhão.)
+
+A formação geomorfológica do estado é composta, predominantemente, por rochas de origem ígnea e metamórficas.`,g:"errado"},
+{n:38,f:"Questões Pop Prof RIna/589995 - CEBRASPE - SM PM MA/2018",t:`O tardio processo de industrialização maranhense se iniciou no fim da década de 60 do século XX, com a construção da rodovia Belém–Brasília e de estradas regionais como São Luís–Belém e São Luís–Teresina. Porém, foi na década de 70, quando massivos aportes foram incorporados à política de industrialização, principalmente por meio do modelo de desenvolvimento do II PND e da criação da SUDAM e SUDENE, que esse processo tomou impulso.
+(Claudiomar M. R. Filho. Formação econômica do Maranhão, 2016)
+
+Julgue o item subsequente.
+
+A criação do Consórcio Siderúrgico do Maranhão, a ALUMAR — siderúrgica produtora de ferro-gusa e aços inoxidáveis — foi um dos principais investimentos da política de industrialização tardia do Maranhão.`,g:"errado"},
+{n:39,f:"Questões Pop Prof RIna/589996 - CEBRASPE - SM PM MA/2018",t:`O estado do Maranhão é um dos dez maiores estados do Brasil e contempla três diferentes biomas: o Cerrado; a Amazônia e uma pequena porção do bioma Caatinga. Julgue o item seguinte.
+
+As dunas do litoral maranhense resultam da ação do clima semiárido presente em grande parte do oeste do estado.`,g:"errado"},
+{n:40,f:"Questões Pop Prof RIna/589997 - CEBRASPE - SM PM MA/2018",t:`(Mesmo contexto sobre os biomas do Maranhão.)
+
+Na Floresta dos Guarás, situada no litoral maranhense a oeste da capital São Luís, estão alguns dos mais extensos e bem conservados manguezais do Nordeste, lugares de grande concentração de ninhais e dormidouros de aves como o Guará.`,g:"certo"},
+{n:41,f:"Questões Pop Prof RIna/589998 - CEBRASPE - SM PM MA/2018",t:`(Mesmo contexto sobre os biomas do Maranhão.)
+
+A área de proteção ambiental dos Lençóis Maranhenses é uma reserva extrativista onde é permitida a exploração sustentável dos mangues e da mata de cocais pelas populações locais.`,g:"errado"},
+{n:42,f:"Questões Pop Prof RIna/628077 - FCC - AGED MA/2018",t:`Considere o mapa do Maranhão abaixo.
+
+Maranhão − tipos climáticos
+[Mapa: região 1 a noroeste/litoral, 2 no centro-oeste, 3 a nordeste/leste, 4 no extremo sul]
+
+De acordo com o mapa, em`,op:[["a","3, as variações de temperatura estão relacionadas à massa de ar Tropical Atlântica."],["b","2, a amplitude térmica anual é superior a 8 °C, principalmente nas áreas mais próximas do litoral."],["c","2 pode-se observar umidade relativa do ar próxima a 80% durante todo o ano."],["d","1 encontram-se os maiores índices de precipitação atmosférica do estado."],["e","4, os efeitos da continentalidade tornam as temperaturas mais baixas e oscilantes."]],g:"d"},
+{n:43,f:"Questões Pop Prof RIna/628078 - FCC - AGED MA/2018",t:`É a maior bacia hidrográfica do Maranhão e ocupa cerca de 29,84% da área total do Estado; abriga 83 municípios, que juntos somam 1.681.307 habitantes − o que representa 25,6% da população maranhense, segundo dados do IBGE. O principal rio desta bacia tem pouco mais de 900 quilômetros de extensão e deságua na baía de São Marcos onde há extensa área de mangues.
+
+Trata-se da bacia hidrográfica do rio`,op:[["a","Itapecuru."],["b","Mearim."],["c","Turiaçu."],["d","Pindaré."],["e","Grajaú."]],g:"b"},
+{n:44,f:"Questões Pop Prof RIna/628079 - FCC - AGED MA/2018",t:`Considere o mapa do Maranhão abaixo.
+[Mapa numerado: 1 ao norte, 2 a noroeste, 3 ao sul, 4 a nordeste, 5 no centro]
+
+As Chapadas do Alto Rio Parnaíba consistem de vastas superfícies planálticas de extensos topos planos e não dissecados, alçadas em cotas que variam entre 350 m e 600 m de altitude. Esse conjunto de chapadas foi genericamente denominado Serra do Penitente.
+
+No mapa acima as Chapadas estão indicadas pelo número`,op:[["a","5"],["b","1"],["c","2"],["d","4"],["e","3"]],g:"e"},
+{n:45,f:"Questões Pop Prof RIna/628080 - FCC - AGED MA/2018",t:`Segundo o Instituto Maranhense de Estudos Socioeconômicos e Cartográficos − IMESC as projeções de crescimento do Produto Interno Bruto − PIB maranhense em 2017 foram favoráveis. Um dos fatores para o crescimento do PIB maranhense foi`,op:[["a","o início da exploração de petróleo na bacia do Parnaíba."],["b","a expansão do extrativismo do babaçu."],["c","o bom desempenho do setor agropecuário."],["d","a implantação de novas indústrias têxteis e de confecções."],["e","o aumento das exportações de minérios"]],g:"c"},
+{n:46,f:"Questões Pop Prof RIna/628081 - FCC - AGED MA/2018",t:`Sobre a agropecuária maranhense é correto afirmar que`,op:[["a","a nova fronteira agrícola em expansão no centro-sul do estado tem exercido forte pressão sobre o cerrado."],["b","o leste do estado abriga importante atividade relacionada ao cultivo de eucaliptos para a indústria"],["c","a principal área de pecuária bovina do estado ocupa pastagens cultivadas em substituição à caatinga."],["d","o moderno cultivo comercial do arroz transformou o estado no maior produtor nacional do cereal em 2017."],["e","a agricultura familiar reduziu o espaço no estado que, atualmente, precisa importar café e mandioca do Piauí."]],g:"a"},
+{n:47,f:"Questões Pop Prof RIna/628083 - FCC - AGED MA/2018",t:`Considere o gráfico abaixo.
+
+Maranhão: Evolução da população urbana
+[Gráfico de linha crescente: 1970 ~25%, 1980 ~30%, 1991 ~40%, 2000 ~59%, 2010 ~63%. IBGE]
+
+A leitura do gráfico e os conhecimentos sobre a população maranhense permitem afirmar que o crescimento da população urbana no período deve-se, entre outros fatores,`,op:[["a","à incorporação de novas áreas com forte potencial de crescimento econômico, a exemplo do baixo Parnaíba."],["b","às migrações de retorno que se intensificaram com as novas atividades econômicas no estado."],["c","aos investimentos realizados no sentido de melhorar a posição do estado como o menos urbanizado do Brasil."],["d","à redução do déficit habitacional em várias médias cidades, o que as transformaram em polos de crescimento demográfico."],["e","à migração da zona rural com destino urbano, sobretudo dentro do próprio estado."]],g:"e"},
+{n:48,f:"Questões Pop Prof RIna/448741 - CEBRASPE - Prof (Pref São Luís)/2017",t:`Tendo em vista que as alterações dos usos e da cobertura do solo na Amazônia maranhense foram marcadas historicamente pela acelerada expansão do desmatamento para fins de implantação de toda logística para a manutenção do agronegócio, e que esse contexto impulsionou o surgimento de grandes processos erosivos e de assoreamento de diversos cursos d'água da região, assinale a opção correta.`,op:[["a","O assoreamento reduz o volume das lâminas d'água e as torna mais claras e aquecidas, o que aumenta a ação fotossintética das algas e promove a eutroficação."],["b","A colmatação é consequência do processo de assoreamento e leva ao estreitamento do curso de água e ao aumento da força das correntes."],["c","A ocupação desordenada das áreas de preservação de rios promove redução no escoamento superficial das águas, o que contribui para a formação de processos erosivos."],["d","Processos de assoreamento são inerentemente relacionados a processos erosivos, uma vez que destes resultam sedimentos que, transportados pela correnteza, se depositam no leito dos rios."],["e","O desmatamento das áreas de preservação dos rios promove aumento da lixiviação dos solos, que é causa de assoreamento e de redução da qualidade da água."]],g:"d"},
+{n:49,f:"Questões Pop Prof RIna/448752 - CEBRASPE - Prof (Pref São Luís)/2017",t:`O estado do Maranhão apresenta notável singularidade no contexto brasileiro em razão dos importantes domínios de natureza que nele se encontram. Esses domínios incluem`,op:[["a","solos férteis derivados de derrames basálticos, revestidos por mata de cocais."],["b","baixadas litorâneas de alta biodiversidade, embora ocupem uma pequena área do estado."],["c","formações costeiras caracterizadas por extenso campo de cerrado, de clima desértico."],["d","espécies nativas do ecossistema subtropical brasileiro, como o pinheiro do Paraná."],["e","faixas de transição que reúnem espécies de ecossistemas amazônicos e do cerrado."]],g:"e"},
+{n:50,f:"Questões Pop Prof RIna/448754 - CEBRASPE - Prof (Pref São Luís)/2017",t:`A região denominada MATOPIBA, da qual o Maranhão faz parte, tornou-se alvo de investimentos nos últimos anos. Com relação à dinâmica socioeconômica dessa região, assinale a opção correta.`,op:[["a","Devido à predominância da agricultura familiar em MATOPIBA, tradicional no Maranhão, grandes agricultores deixaram de encontrar terras para investir na implantação de monoculturas na região."],["b","Essa região compreende parte do território do Maranhão em que se notam excelentes índices de desenvolvimento humano (IDH), dado o crescimento econômico verificado."],["c","Os investimentos agrícolas em MATOPIBA garantiram sucesso na produção, com destaque, por exemplo, para o cultivo do feijão."],["d","Os estados da região de MATOPIBA colaboram como fornecedores de insumos tecnológicos, beneficiando-se do crescimento das atividades econômicas implantadas na região."],["e","No Maranhão, observa-se a instauração de um fluxo migratório em função da oferta de emprego na região de MATOPIBA, o que tem provocado decréscimo populacional na capital do estado."]],g:"c"},
+{n:51,f:"Questões Pop Prof RIna/448755 - CEBRASPE - Prof (Pref São Luís)/2017",t:`Assinale a opção correta, acerca de aspectos naturais do estado do Maranhão e seu aproveitamento nas atividades humanas.`,op:[["a","As maiores altitudes são encontradas no norte do estado, onde as médias de temperatura anual são inferiores a 20 °C."],["b","O norte do estado corresponde a terrenos sedimentares da bacia do rio Parnaíba, com potencial de geração de hidroeletricidade."],["c","As formas de relevo encontradas no estado impossibilitam a agricultura mecanizada."],["d","A topografia condiciona um padrão de drenagem de orientação norte-sul."],["e","O estado apresenta relevo planáltico, com presença de chapadas."]],g:"e"},
+{n:52,f:"Questões Pop Prof RIna/448756 - CEBRASPE - Prof (Pref São Luís)/2017",t:`O clima quente e úmido do estado do Maranhão deve-se à`,op:[["a","proximidade com o Equador, o que garante a expressiva incidência solar durante todo o ano e, consequentemente, altas temperaturas."],["b","alta latitude em que o estado se situa, o que facilita a entrada de ventos alísios, carregados de umidade e responsáveis pelas chuvas."],["c","faixa litorânea maranhense, que impede a presença de clima seco."],["d","topografia do estado, que favorece o aquecimento adiabático e a evaporação da umidade do ar, o que promove altos índices pluviométricos."],["e","presença da floresta tropical amazônica, que recobre a maior parte do estado e é responsável pelas chuvas abundantes."]],g:"a"},
+{n:53,f:"Questões Pop Prof RIna/448757 - CEBRASPE - Prof (Pref São Luís)/2017",t:`Crescimento populacional do Maranhão
+[Gráfico: 1940: 1.231.955; 1950: 1.577.838; 1960: 2.477.371; 1970: 2.992.686; 1980: 4.673.100; 1991: 5.181.800; 1996: 5.222.183; 2000: 5.638.381; 2010: 6.569.683]
+
+De acordo com o IBGE, essa tendência de crescimento tem-se mantido. Considerando esse gráfico e as informações relativas a ele, assinale a opção correta.`,op:[["a","Infere-se dos dados apresentados no gráfico que tem ocorrido aumento contínuo na taxa de natalidade do estado."],["b","Comparada aos demais intervalos mostrados no gráfico, a década de 70 a 80 do século passado foi aquela em que o Maranhão registrou o menor aumento em seu contingente populacional."],["c","O crescimento populacional, no período mostrado no gráfico, ocorreu a taxas variáveis."],["d","Entre os anos de 2000 e 2010, o estado apresentou o menor crescimento em relação aos demais intervalos mostrados no gráfico."],["e","A transição demográfica marca a evolução da população do estado."]],g:"c"},
+{n:54,f:"Questões Pop Prof RIna/448758 - CEBRASPE - Prof (Pref São Luís)/2017",t:`Com relação à dinâmica e à distribuição populacional no Maranhão, assinale a opção correta.`,op:[["a","A cidade de Imperatriz é a mais populosa do estado."],["b","Em função do volume da produção no setor primário da economia, atualmente a população maranhense é majoritariamente rural."],["c","O setor de serviços nas grandes cidades do estado tem liberado mão de obra para o campo."],["d","Fatores de ordem social e econômica influenciam a existência de fluxos migratórios da população maranhense para outros estados brasileiros."],["e","Tem havido maior concentração da população no sul do estado, devido aos fluxos imigratórios."]],g:"d"},
+{n:55,f:"Questões Pop Prof RIna/448759 - CEBRASPE - Prof (Pref São Luís)/2017",t:`Recentemente, o Maranhão entrou em emergência por causa de incêndios. Somente em outubro, foram registrados mais de quatro mil focos. As queimadas sem controle já desabrigaram cem famílias em cinco cidades no leste do Maranhão, em menos de uma semana.
+
+Uma das consequências dos incêndios no Maranhão é o`,op:[["a","aumento da área do bioma semiárido nordestino."],["b","esvaziamento permanente das populações atingidas."],["c","aumento da fertilidade dos solos das áreas de cultivo agrícola do estado, graças ao acréscimo de carbono."],["d","decréscimo da biodiversidade local."],["e","combate a pragas que assolam as safras e os parques nacionais."]],g:"d"},
+{n:56,f:"Questões Pop Prof RIna/448761 - CEBRASPE - Prof (Pref São Luís)/2017",t:`Terras do oeste maranhense estão incluídas no Programa Grande Carajás (PGC). Essa região participa nas atividades do PGC com`,op:[["a","atividades industriais ligadas ao beneficiamento do arroz e da mandioca."],["b","atividades petroquímicas, que integram o setor mais importante do oeste maranhense."],["c","o fornecimento de energia elétrica, para o abastecimento das indústrias de alumínio."],["d","o transporte de cargas da companhia Vale do Rio Doce pela Estrada de Ferro Carajás."],["e","a exploração de minério de ferro para exportação."]],g:"d"},
+{n:57,f:"Questões Pop Prof RIna/448762 - CEBRASPE - Prof (Pref São Luís)/2017",t:`Um estudo divulgado pela Confederação Nacional da Indústria (CNI) mostrou que 15,6% das riquezas maranhenses são geradas pelo setor industrial. De acordo com o perfil da indústria nos estados, esse setor emprega, no Maranhão, mais de 110 mil pessoas, o que corresponde a 0,9% da força de trabalho da indústria brasileira. (notícia de novembro de 2014)
+
+Assinale a opção correta, a respeito dos setores econômicos no estado do Maranhão.`,op:[["a","O setor industrial emprega a maior parte da população economicamente ativa do estado."],["b","Ao contrário da indústria, que apresenta crescimento, a agricultura é uma atividade econômica em declínio no estado."],["c","A maior parte do PIB do estado é gerada pelo setor industrial."],["d","O estado passou a figurar entre os mais industrializados do Brasil."],["e","Investimentos em infraestrutura contribuíram para alavancar a economia industrial do estado."]],g:"e"},
+{n:58,f:"Questões Pop Prof RIna/407301 - FCC - SEMA MA/2016",t:`"São áreas com alto potencial social. Estão dotadas de infraestrutura suficiente para o desenvolvimento das atividades agrícolas, agropecuárias, florestais, industriais e minerárias consolidadas, sobretudo atendidas por vias de acesso e escoamento da produção consolidada. O custo de oportunidade da preservação da vegetação nativa se tornou excessivamente elevado para garantir a conservação destas áreas fora das APP's ou reserva legal. A aptidão agrícola predominantemente é considerada boa. Apresenta vulnerabilidade natural à erosão predominantemente baixa." (seplan.ma.gov.br)
+
+As diretrizes compatíveis com a vulnerabilidade natural a erosão considerando as características descritas na zona do Macrozoneamento Ecológico e Econômico do Estado do Maranhão são:`,op:[["a","Áreas prioritárias para estudos complementares e mais detalhados para avaliação mais criteriosa das características socioeconômicas e ecológicas, e subsídio a destinação mais adequada desta área."],["b","Desenvolvimento das atividades primárias nas áreas desmatadas ou convertidas para outros usos agropecuário ou agrícola, com práticas adequadas e manejo no uso dos recursos naturais, especialmente o solo, preservando os remanescentes de vegetação natural."],["c","Atividades das comunidades tradicionais e indígenas podem ser fomentadas, mas carecem de ordenamento, organização, controle e desenvolvimento e políticas públicas e investimentos devem ser controlados e direcionados levando em conta as limitações e fragilidades ambientais locais."],["d","Garantir a integridade do ecossistema e áreas prioritárias para estudos complementares e mais detalhados para avaliação mais criteriosa das características socioeconômicas e ecofisiológicas."],["e","O desmatamento incremental deve ser criterioso e evitado, de forma a manter as características naturais no entorno de áreas de florestas de manguezais e trata-se também de áreas onde o pagamento por serviços ambientais deve ser intensificados favorecendo os moradores locais."]],g:"b"},
+{n:59,f:"Questões Pop Prof RIna/407308 - FCC - SEMA MA/2016",t:`No sul do Maranhão observou-se, nas últimas décadas, uma intensa transformação territorial e segundo Santos, 1996:244 a região é "um espaço nacional da econômica internacional".
+
+Esta frase se refere ao fato`,op:[["a","da ascensão do capital internacional na industrialização regional."],["b","da sojicultura ter promovido a instalação de novos empreendimentos e da queda do crescimento demográfico."],["c","da ampliação de pesquisa e tecnologia em zootecnia auxiliada por satélites."],["d","da utilização de maquinário moderno, computadores de última geração a baixo custo e sistema de telefonia."],["e","das empresas de sojicultura se tornarem mais competitivas no setor de commodities agrícolas."]],g:"e"},
+{n:60,f:"Questões Pop Prof RIna/407311 - FCC - SEMA MA/2016",t:`O Estado do Maranhão, tal qual a Amazônia, foi e continua sendo alvo de uma série de políticas de ordenação e uso do território as quais iniciaram-se ainda no regime colonial e que, no transcorrer do século XX principalmente nos Governos militares, intensificaram-se na medida em que foram sendo definidas as respectivas "vocações" territoriais, as quais buscaram articular-se a um projeto nacional de desenvolvimento e tornar a economia competitiva no mercado global. (ROMÃO et al., 2011)
+
+Considerando que as intervenções Estatais influem nas novas territorializações e promovem ao mesmo tempo desterritorialização, o projeto que articulou uma política nacional à formação territorial do Estado do Maranhão no século XX, foi a`,op:[["a","implantação, no município de Alcântara de um centro de alta tecnologia de lançamento de foguetes que provocou a desterritorialização de comunidades quilombolas e tradicionais."],["b","implantação do Porto de Itaqui na baía de São Marcos que provocou um forte investimento em melhorias urbanas atraindo setores sociais de alta renda para a região."],["c","implantação da ferrovia Norte-Sul que promoveu um choque negativo na porosidade territorial e facilitou a relação com o exterior incentivando a exportação de commodities agrícolas."],["d","expansão das rodovias que levou a região da Baixada Maranhense a falência do modelo agroexportador e confinou essa região ao contato apenas com as localidades mais próximas, configurando um ambiente de marasmo."],["e","expansão de todas as infraestruturas territoriais, que promoveram somente o setor de exportação não trazendo nenhum benefício social."]],g:"a"},
+{n:61,f:"Questões Pop Prof RIna/407313 - FCC - SEMA MA/2016",t:`Em relação a organização espacial da cidade de São Luís do Maranhão:`,op:[["a","O espaço urbano e sua paisagem expressam-se fragmentados e interligados por políticas territoriais urbanas."],["b","A cidade possui um amplo segmento da população que se organizou a partir dos princípios constitucionais como: moradia, saúde, segurança e dignidade."],["c","A cidade possui uma organização trivial das cidades subdesenvolvidas, na qual a divisão do território urbano, se dá pela definição de periferia e centro."],["d","São Luís é uma cidade em harmonia que se processa evidenciando um antagonismo dada a intensidade e veloz metamorfose urbana que não reflete a sua história."],["e","São Luís é uma cidade segregada mas nas últimas décadas vem experimentando uma forte transformação territorial para reduzir as desigualdades sociais."]],g:"c"},
+{n:62,f:"Questões Pop Prof RIna/407314 - FCC - SEMA MA/2016",t:`Considere a figura abaixo.
+
+A evolução da área plantada da lavoura temporária no Maranhão (1990-2005)
+[Pizza 1990: Soja 1%, Alimentos básicos 35%, Outros produtos 64%. Pizza 2005: Soja 23%, Alimentos básicos 27%, Outros produtos 50%. *Alimentos básicos: arroz, mandioca e feijão. IBGE]
+
+Nas últimas décadas verificou-se no Estado do Maranhão um processo intenso de substituição das lavouras destinadas aos alimentos básicos, tais como o arroz, em detrimento à expansão do agronegócio sojicultor. O aumento da cultura de soja se deve, dentre outros fatores`,op:[["a",`à "ajuda" estatal às empresas cooperativistas de comunidades tradicionais que sempre viveram na região sul-maranhense.`],["b","à adoção de incentivos fiscais favoráveis à exportação por parte do estado."],["c","ao crescimento na produção de soja em outras regiões do Brasil."],["d","à aceleração da mesorregião Sul do Maranhão em detrimento do Leste, em função da sua produtividade."],["e","à produção de soja ser muito antiga nesta microrregião e sempre ter obtido significativos ganhos de produtividade em relação a outras regiões do Estado."]],g:"b"},
+{n:63,f:"Questões Pop Prof RIna/407321 - FCC - SEMA MA/2016",t:`Considere o mapa abaixo.
+
+Comunidades e Territórios Quilombolas Auto-Identificados no Maranhão
+[Mapa por mesorregião: Norte Maranhense 592 comunidades (maior concentração, inclui Alcântara e Itapecuru Mirim); Oeste Maranhense 152; Centro Maranhense 51; Leste Maranhense 38; Sul Maranhense 0. Fonte: FCP, UNB, SEPPIR, INCRA, UFAP, Programa Raízes, CEDENPA, NAEA]
+
+O Maranhão é considerado uma sociedade de origem escravista tardia. Foi no final do século XVIII que se desenvolveu mais fortemente uma escravidão agrícola na região, ainda que desde o século anterior escravos africanos tivessem sido utilizados como mão-de-obra. (Assunção, 1996: 434)
+
+A partir do mapa e do texto conclui-se que a região`,op:[["a","leste concentra grande número de comunidades quilombolas com um número pequeno de comunidades por município."],["b","norte concentra o maior número de quilombos por mesorregião e também o maior número de comunidades por municípios, consequência do trabalho escravista de séculos anteriores."],["c","oeste não apresenta municípios com comunidades quilombolas e o número de comunidades é o mais baixo."],["d","centro não apresenta um número significativo de comunidades quilombolas e o número de comunidades por município é o menor."],["e","sul apresenta ao mesmo tempo um número de comunidades por município baixo e um número de comunidades por mesorregião médio."]],g:"b"},
+{n:64,f:"Questões Pop Prof RIna/1302251 - Inst. Coelho Neto - Pref S Amaro MA/2016",t:`Analise as proposições sobre o Estado do Maranhão.
+
+I. O estado do Maranhão está dividido em cinco mesorregiões.
+II. A Oeste, o Maranhão limita-se com o estado do Piauí.
+III. O clima equatorial é predominante na porção leste do estado, apresentando altas médias pluviométricas e temperaturas elevadas.
+IV. Possui a segunda maior costa litorânea brasileira.
+
+Assinale a opção correta.`,op:[["a","Apenas as proposições II e III são falsas."],["b","Apenas a proposição I é verdadeira."],["c","Apenas as proposições I e III são verdadeiras."],["d","As proposições I, II, III e IV são falsas."],["e","Apenas as proposições I e II são verdadeiras."]],g:"a"},
+{n:65,f:"Questões Pop Prof RIna/1303680 - Inst. Coelho Neto - Pref S Amaro MA/2016",t:`Sobre a hidrografia do Maranhão é incorreto afirmar:`,op:[["a","O rio Itapecuru banha as cidades de Colinas, Codó e Rosário."],["b","Possui predominância de rios intermitentes."],["c","A Baixada Maranhense caracteriza-se pela grande concentração de lagos."],["d","Predomínio de rios com drenagem do tipo exorréica."],["e","A rede hidrográfica maranhense caracteriza-se pelo domínio de rios com foz do tipo estuário."]],g:"b"},
+{n:66,f:"Questões Pop Prof RIna/2479995 - FSADU UFMA - IF MA/2015",t:`É consenso afirmar que o processo de ocupação do espaço maranhense desenvolveu-se a partir do que se convencionou chamar de correntes de povoamento, as quais ocorreram em tempos diferentes, bem como avançaram pelo território em direções distintas, dando origem a várias cidades e proporcionando o desenvolvimento de atividades econômicas diversas. Acerca das correntes de povoamento do espaço maranhense, pode-se afirmar que`,op:[["a","no século XIX, os migrantes da seca avançaram pelo interior do Maranhão, pelos vales dos rios Parnaíba e Manoel Alves Grande, alcançando municípios como Caxias e Imperatriz."],["b","no século XVI, os franceses começaram a colonização do Maranhão, estabelecendo-se em 1612, na ilha do Maranhão, iniciando, assim, o processo de ocupação a partir dos cursos fluviais."],["c","no século XVIII, os portugueses efetivaram a ocupação costeira avançando para o litoral leste e oeste, como também pelo vale úmido do rio Pindaré."],["d","no século XVII, deu-se a corrente dos criadores de gado, vindos da região da caatinga nordestina em direção ao interior do Maranhão, especialmente o vale úmido do rio Itapecuru."],["e","o fracasso do sistema de capitanias hereditárias fez com que o Maranhão permanecesse por longo tempo esquecido pela Coroa Portuguesa. Em tal período, a costa do Estado tornou-se alvo de piratas e traficantes."]],g:"e"},
+{n:67,f:"Questões Pop Prof RIna/2479996 - FSADU UFMA - IF MA/2015",t:`Com relação às mesorregiões do Maranhão, é CORRETO afirmar que`,op:[["a","a mesorregião Centro Maranhense engloba três microrregiões e destacam-se as atividades da rizicultura, pecuária leiteira e o extrativismo do babaçu."],["b","a mesorregião Leste Maranhense teve sua ocupação associada à integração da chamada pré-amazônia à economia nacional por meio das frentes."],["c","a mesorregião Oeste Maranhense hoje se destaca também na produção de soja, representando uma nova fronteira agrícola para esse produto."],["d","a mesorregião Sul Maranhense tem, como maior destaque, a criação do rebanho bovino de forma extensiva, com projetos voltados para a pecuária de corte."],["e","a mesorregião Norte Maranhense apresenta quadro natural diversificado, com atividades econômicas restritas às indústrias de óleos, gorduras e ceras vegetais."]],g:"a"},
+{n:68,f:"Questões Pop Prof RIna/2479999 - FSADU UFMA - IF MA/2015",t:`A vegetação do Estado do Maranhão reflete a sua localização, na transição entre o Nordeste e a região Norte. Destacam-se, no Estado, as áreas de floresta ombrófila, cerrado, mangue, campos inundáveis e vegetação de dunas e restingas. Com relação às características das formações vegetais no Maranhão, assinale a opção CORRETA.`,op:[["a","A floresta ombrófila ocupa a porção nordeste do Estado, subdividindo-se em aluvial, de platôs e submontana."],["b","O cerrado constitui o maior bioma do Maranhão, ocupando o leste e o sul do Estado, com densidade variando conforme o padrão de umidade."],["c","O manguezal ocupa a faixa litorânea, especialmente na sua porção oriental, onde é mais preservado."],["d","Os campos inundáveis, considerados áreas de influência exclusiva dos cursos fluviais, ocorrem na Baixada Maranhense."],["e","As dunas e restingas ocorrem na faixa litorânea, especialmente na parte ocidental, com destaque para o Parque Nacional dos Lençóis Maranhenses."]],g:"b"},
+{n:69,f:"Questões Pop Prof RIna/2480002 - FSADU UFMA - IF MA/2015",t:`Com o método de classificação proposto por Thorntwaite (1948), foram identificados quatro tipos climáticos no Maranhão. O Clima Úmido do tipo B2 com pequena ou nenhuma deficiência hídrica anual, temperaturas médias anuais entre 26°C e 27°C e umidade relativa do ar anual próxima a 80%, é encontrado em que parte do Maranhão?`,op:[["a","Sul."],["b","Nordeste."],["c","Centro-Oeste."],["d","Extremo Noroeste."],["e","Extremo Leste."]],g:"d"},
+{n:70,f:"Questões Pop Prof RIna/2480009 - FSADU UFMA - IF MA/2015",t:`"Formações abertas, rasteiras, relacionados com solos gleissolos em áreas planas, inundáveis, com fisionomia campestre, onde ocorrem espécies como: piri, canarana e capins-junco, com presença ou não de carnaubeiras, onde, atualmente, são mais aproveitados com pecuária extensiva de bovinos e bubalinos." (Uema, Atlas do Maranhão, 2002, p. 22)
+
+A descrição acima refere-se a que vegetação presente no Maranhão?`,op:[["a","Campos inundáveis da Baixada."],["b","Campos inundáveis litorâneos."],["c","Cerrado."],["d","Caatinga."],["e","Restinga."]],g:"a"},
+{n:71,f:"Questões Pop Prof RIna/1184953 - Instituto Ludus - CRF MA/2014",t:`Não é rio que integra a bacia hidrográfica do Maranhão`,op:[["a","Rio Parnaíba."],["b","Rio Munim."],["c","Rio Maranhão."],["d","Rio Preguiça."],["e","Rio Gurupi"]],g:"c"},
+{n:72,f:"Questões Pop Prof RIna/1184954 - Instituto Ludus - CRF MA/2014",t:`O Maranhão é integrado por quantas Microrregiões?`,op:[["a","21."],["b","20."],["c","19."],["d","18."],["e","17."]],g:"a"},
+{n:73,f:"Questões Pop Prof RIna/1184955 - Instituto Ludus - CRF MA/2014",t:`É extremo Leste do Estado do Maranhão está situado no Município de`,op:[["a","Araioses."],["b","Magalhães de Almeida."],["c","Água Doce do Maranhão."],["d","Barão de Grajaú."],["e","São Francisco do Maranhão."]],g:"a"},
+{n:74,f:"Questões Pop Prof RIna/1184957 - Instituto Ludus - CRF MA/2014",t:`Uma das formações vegetais do Maranhão é a savana, região com predominância de vegetação xeromorfa aberta, dominada e marcada por um estrato herbáceo. Alternam-se às vezes pequenas árvores isoladas. Assinale, dentre as alternativas seguintes, aquela que não relaciona espécie (vegetal) comum na savana maranhense.`,op:[["a","araticum."],["b","pequi."],["c","cajuí."],["d","murici."],["e","sucupira."]],g:"b"},
+{n:75,f:"Questões Pop Prof RIna/1185015 - Instituto Ludus - CRF MA/2014",t:`No Maranhão, alguns Municípios fazem divisa com mais de um Estado Federado. Um deles é`,op:[["a","Alto Parnaíba."],["b","Carolina."],["c","Boa Vista do Gurupi."],["d","Itinga do Maranhão."],["e","Tasso Fragoso."]],g:"a"},
+{n:76,f:"Questões Pop Prof RIna/1185017 - Instituto Ludus - CRF MA/2014",t:`O Maranhão apresenta algumas elevações que formam o grande dispersor d'água, pois é onde originam-se os principais rios que formam a rede hidrográfica do Estado. Uma dessas serras está situada entre os Municípios de São Raimundo das Mangabeiras até Loreto, separando os vales dos rios Balsas e o Alto Itapecuru. Trata-se da`,op:[["a","Serra do Cintra."],["b","Serra da Croeira."],["c","Serra do Valentim."],["d","Chapada das Mangabeiras."],["e","Serra Vermelha."]],g:"e"},
+{n:77,f:"Questões Pop Prof RIna/1185018 - Instituto Ludus - CRF MA/2014",t:`É uma BR (Rodovia Federal) que não corta o Maranhão.`,op:[["a","BR-010."],["b","BR-226."],["c","BR-343."],["d","BR-222."],["e","BR-230."]],g:"c"},
+{n:78,f:"Questões Pop Prof RIna/200141 - FGV - CBM MA/2012",t:`Dentre as unidades de conservação existentes no Brasil para preservação do meio ambiente, os Parques Nacionais tem como objetivo a preservação de ecossistemas naturais de grande relevância ecológica e beleza cênica. Criado em 1981, o Parque Nacional dos Lençóis Maranhenses garante a proteção de um dos principais patrimônios do estado do Maranhão e do país.
+
+Com relação ao Parque Nacional dos Lençóis Maranhenses, analise as afirmativas a seguir:
+
+I. O parque abrange áreas dos municípios maranhenses de Barreirinhas, Primeira Cruz e Açailândia.
+II. Entre as dunas ativas situadas na área do parque ocorrem lagoas temporárias ou permanentes.
+III. A pluviometria local é marcada pelo elevado índice de chuvas e pela regularidade da distribuição ao longo do ano.
+
+Assinale:`,op:[["a","se somente a afirmativa I estiver correta."],["b","se somente a afirmativa II estiver correta."],["c","se somente a afirmativa III estiver correta."],["d","se somente as afirmativas II e III estiverem corretas."],["e","se todas as afirmativas estiverem corretas."]],g:"b"},
+{n:79,f:"Questões Pop Prof RIna/200142 - FGV - CBM MA/2012",t:`Atualmente, as bacias hidrográficas vêm sendo adotadas como unidades de planejamento ambiental. As bacias limítrofes, compostas por rios que atravessam limites político-administrativos, representam um desafio para a gestão integrada dos recursos hídricos.
+
+Sobre as bacias limítrofes maranhenses, assinale a afirmativa correta.`,op:[["a","Entre as bacias limítrofes, a do rio Parnaíba é a que possui a maior área no estado do Maranhão."],["b","A bacia do rio Tocantins abrange, entre outros, os estados de Tocantins, Pará, Maranhão e Piauí."],["c","A bacia do Rio Mearim abrange as áreas limítrofes do Maranhão com o estado do Piauí."],["d","A área ocupada pelas bacias limítrofes no território do Maranhão é maior que a área ocupada pelas bacias dos rios genuinamente maranhenses."],["e","O Rio Gurupi constitui um trecho da linha limítrofe entre os estados do Maranhão e do Piauí."]],g:"a"},
+{n:80,f:"Questões Pop Prof RIna/200143 - FGV - CBM MA/2012",t:`Na década de 1970, o cultivo da soja passou a ocupar áreas do Centro-Oeste brasileiro. A partir da década de 1990 uma nova fronteira agrícola surgiu com a expansão da sojicultura nos estados do Maranhão, Piauí, Tocantins e Pará.
+
+Com relação ao cultivo da soja no Maranhão, analise as afirmativas a seguir.
+
+I. As empresas exportadoras de soja se utilizam, além de outros modais, da logística da Estrada de Ferro Carajás para o escoamento da produção.
+II. A área plantada e a produção de soja, no período de 1990 a 2005, apresentaram um grande crescimento.
+III. Os principais municípios produtores de soja no Maranhão estão situados no sul do estado e na divisa com o estado do Piauí.
+
+Assinale:`,op:[["a","se somente a afirmativa I estiver correta."],["b","se somente a afirmativa II estiver correta."],["c","se somente a afirmativa III estiver correta."],["d","se somente as afirmativas I e II estiverem corretas."],["e","se todas as afirmativas estiverem corretas."]],g:"e"},
+{n:81,f:"Questões Pop Prof RIna/200144 - FGV - PM MA/2012",t:`O censo de 2010, realizado pelo IBGE, evidenciou que a população total do Maranhão, aproximadamente 6.574.789 habitantes, representava cerca de 3,5% da população brasileira.
+
+Em relação à população do Maranhão, analise as afirmativas a seguir.
+
+I. O Maranhão apresenta o menor índice de urbanização dentre os estados brasileiros.
+II. A cidade de São Luís ultrapassou a marca de um milhão de habitantes.
+III. A população do Maranhão representa mais de 30% da população da Região Nordeste.
+
+Assinale:`,op:[["a","se somente a afirmativa I estiver correta."],["b","se somente a afirmativa II estiver correta."],["c","se somente a afirmativa III estiver correta."],["d","se somente as afirmativas I e II estiverem corretas."],["e","se todas as afirmativas estiverem corretas."]],g:"d"},
+{n:82,f:"Questões Pop Prof RIna/200146 - FGV - CBM MA/2012",t:`O extrativismo vegetal é uma atividade tradicional do Estado do Maranhão. Dentre os produtos do extrativismo o que mais se destaca é o babaçu. As amêndoas dessa palmeira são transformadas em óleo ou azeite, utilizados no preparo de alimentos, na produção de sabão ou cosméticos e como combustível.
+
+Sobre o extrativismo do babaçu no Maranhão, assinale a afirmativa correta.`,op:[["a","A palmeira babaçu só é encontrada no Estado do Maranhão."],["b","A extração do babaçu envolve, atualmente, um alto grau de mecanização."],["c","A legislação não garante o acesso aos babaçuais e a proteção das palmeiras de babaçu."],["d","A Reserva Extrativista Quilombo do Frexal está situada em uma área de grande concentração de palmeiras de babaçu."],["e",`A atividade extrativa de babaçu é realizada por homens que se autodenominam "quebradores de coco".`]],g:"d"},
+{n:83,f:"Questões Pop Prof RIna/1108645 - FCC - SM PM MA/2006",t:`São Luís, capital do Maranhão, foi elevada pelo IBGE à condição de metrópole emergente. Uma das condições necessárias para essa classificação é`,op:[["a","ter uma densidade demográfica igual ou superior a 60 hab./km²."],["b","possuir mais de 50% da população ativa empregada na indústria."],["c","polarizar uma região com extensão superior a 500 mil km²."],["d","apresentar uma conurbação com pelo menos 10 municípios."],["e","contar com mais de 200 anos de fundação."]],g:"a"},
+{n:84,f:"Questões Pop Prof RIna/1108649 - FCC - SM PM MA/2006",t:`A posição da cidade de São Luís a aproximadamente 2° de latitude Sul e na faixa litorânea, garante a presença de um clima característico. A alternativa que identifica a distribuição anual de temperaturas e chuvas da capital maranhense é (climogramas adaptados do original):`,op:[["a","chuva moderada e relativamente constante o ano todo (~100-150mm), com leve pico em maio-julho; temperatura com variação suave."],["b","chuva baixa e irregular todo o ano (~100-200mm), sem padrão sazonal definido; temperatura estável."],["c","chuva alta e quase constante (~175-225mm) o ano todo, com leve pico em agosto; temperatura decrescente ao longo do ano."],["d","chuva fortemente concentrada de janeiro a maio (pico de quase 400mm em março), com estação seca bem marcada de junho a dezembro; temperatura estável entre 26-27°C o ano todo."],["e","chuva moderada concentrada de fevereiro a maio (pico ~200mm), com seca de junho a dezembro; temperatura com pico entre março-abril."]],g:"d"},
+{n:85,f:"Questões Pop Prof RIna/1108651 - FCC - SM PM MA/2006",t:`A extensa faixa litorânea maranhense garante uma série de vantagens ao estado. Considere as atividades a seguir:
+
+I. Importante produção salineira, a maior do Nordeste.
+II. Grande produção de frutos do mar (camarão, caranguejo e sururu).
+III. Intensa movimentação dos portos destinados à exportação de alumínio e ferro, dentre outros produtos.
+IV. Grande exploração de tanino e madeiras aromáticas das áreas de mangues.
+
+Dentre as atividades desenvolvidas no litoral, está correto o que se afirma APENAS em`,op:[["a","I e II."],["b","I e III."],["c","II e III."],["d","II e IV."],["e","III e IV."]],g:"c"},
+{n:86,f:"Questões Pop Prof RIna/1108652 - FCC - SM PM MA/2006",t:`Considere o gráfico a seguir.
+
+Maranhão: Composição do Produto Interno Bruto (2000)
+[Gráfico de pizza com três setores I, II e III; I é a maior fatia, II é a segunda maior, III a menor. IBGE]
+
+Identifica corretamente um dos setores do gráfico:`,op:[["a","I - indústria."],["b","I - serviços."],["c","II - agropecuária."],["d","II - serviços."],["e","III - indústria."]],g:"b"},
+{n:87,f:"Questões Pop Prof RIna/2053614 - ESAG - Pref São Luís/2006",t:`Considere o mapa com a vegetação natural do estado do Maranhão.
+[Mapa: área clara a oeste/sudoeste (cerrado); faixa escura central-norte (mata de transição/floresta); faixa estreita no litoral norte (cerrado/campos); pequena área hachurada no litoral (mangues/restinga)]
+
+A maior parte dos rios do estado que desembocam no Golfão Maranhense, como Pindaré, Grajaú e Mearim nascem em áreas recobertas por`,op:[["a","floresta equatorial."],["b","mata de transição."],["c","mata tropical."],["d","campos."],["e","cerrados."]],g:"e"},
+{n:88,f:"Questões Pop Prof RIna/2053615 - ESAG - Pref São Luís/2006",t:`A cidade de Alcântara, tombada como monumento nacional em 1948, pelo então Serviço do Patrimônio Histórico e Artístico Nacional tem ainda lugar de destaque em função de suas condições geográficas. Entre tais condições, podem ser citadas:`,op:[["a","a proximidade em relação à linha do Equador, estratégica para o programa espacial, por ser favorável ao lançamento de satélites de comunicação."],["b",`grandes altitudes, clima temperado e relevo acidentado, favorecendo a atividade turística envolvendo os chamados "esportes clássicos".`],["c","distância de grandes centros urbanos, acessíveis apenas por via marítima, proporcionando o isolamento necessário a atividades de lazer voltadas para a interação harmônica com a natureza."],["d","instabilidade climática, com ventos de grande intensidade e regime intermitente de chuvas, favorecendo frequentes acidentes marítimos de grandes proporções e com intensa cobertura jornalística."]],g:"a"},
+{n:89,f:"Questões Pop Prof RIna - ESAG - Pref São Luís/2006",t:`Assinale a alternativa que indica corretamente as cidades que atualmente estão entre as cinco maiores do Maranhão, em termos populacionais:`,op:[["a","São Luís, Bacutiriba e Peri Mirim."],["b","São Luís, Alcântara e Guimarães."],["c","São Luís, Bequimão e Mandacaru."],["d","São Luís, Imperatriz e Caxias."]],g:"d"}
+];
+
+const DADOS = {historia: HISTORIA, geografia: GEOGRAFIA};
+const respostas = {historia:{}, geografia:{}};
+let abaAtual = "historia";
+
+function mudarAba(aba){
+  abaAtual = aba;
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.toggle("active", b.dataset.tab===aba));
+  renderizar();
+}
+
+function escolherAlternativa(aba, idx, letra){
+  if(respostas[aba][idx]) return;
+  respostas[aba][idx] = letra;
+  renderizar();
+}
+
+function reiniciar(){
+  respostas[abaAtual] = {};
+  renderizar();
+}
+
+function renderizar(){
+  const lista = DADOS[abaAtual];
+  const main = document.getElementById("main");
+  main.innerHTML = "";
+
+  lista.forEach(q=>{
+    const div = document.createElement("div");
+    div.className = "question";
+
+    const head = document.createElement("div");
+    head.className = "q-head";
+    head.innerHTML = `<span class="q-num">Questão ${q.n}</span><span class="q-source">${q.f}</span>`;
+    div.appendChild(head);
+
+    const texto = document.createElement("div");
+    texto.className = "q-text";
+    texto.textContent = q.t;
+    div.appendChild(texto);
+
+    const respostaAtual = respostas[abaAtual][q.n];
+
+    if(q.op){
+      const alts = document.createElement("div");
+      alts.className = "alts";
+      q.op.forEach(([letra,txt])=>{
+        const btn = document.createElement("button");
+        btn.className = "alt-btn";
+        btn.innerHTML = `<b>${letra.toUpperCase()})</b> ${txt}`;
+        if(respostaAtual){
+          btn.classList.add("disabled");
+          if(letra===q.g) btn.classList.add("correct");
+          else if(letra===respostaAtual) btn.classList.add("wrong");
+        } else {
+          btn.onclick = ()=>escolherAlternativa(abaAtual, q.n, letra);
+        }
+        alts.appendChild(btn);
+      });
+      div.appendChild(alts);
+    } else {
+      const row = document.createElement("div");
+      row.className = "ce-row";
+      ["certo","errado"].forEach(op=>{
+        const btn = document.createElement("button");
+        btn.className = "ce-btn";
+        btn.textContent = op==="certo" ? "✅ CERTO" : "❌ ERRADO";
+        if(respostaAtual){
+          btn.classList.add("disabled");
+          if(op===q.g) btn.classList.add("correct");
+          else if(op===respostaAtual) btn.classList.add("wrong");
+        } else {
+          btn.onclick = ()=>escolherAlternativa(abaAtual, q.n, op);
+        }
+        row.appendChild(btn);
+      });
+      div.appendChild(row);
+    }
+
+    if(respostaAtual){
+      const fb = document.createElement("div");
+      const acertou = respostaAtual === q.g;
+      fb.className = "feedback " + (acertou ? "ok" : "bad");
+      fb.textContent = acertou
+        ? "✔ Você acertou! Gabarito: " + q.g.toUpperCase()
+        : "✘ Você errou. Gabarito: " + q.g.toUpperCase();
+      div.appendChild(fb);
+    }
+
+    main.appendChild(div);
+  });
+
+  atualizarPlacar();
+}
+
+function atualizarPlacar(){
+  const lista = DADOS[abaAtual];
+  const total = lista.length;
+  const resp = Object.keys(respostas[abaAtual]).length;
+  let ok=0, bad=0;
+  lista.forEach(q=>{
+    const r = respostas[abaAtual][q.n];
+    if(r){ if(r===q.g) ok++; else bad++; }
+  });
+  document.getElementById("sc-total").textContent = total;
+  document.getElementById("sc-resp").textContent = resp;
+  document.getElementById("sc-ok").textContent = ok;
+  document.getElementById("sc-bad").textContent = bad;
+}
+
+renderizar();
+</script>
+</body>
+</html>
